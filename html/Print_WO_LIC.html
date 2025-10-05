@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lalith Jewellery</title>
+
+<!-- Google Fonts -->
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&family=Poppins:wght@400;600&display=swap"
+	rel="stylesheet" />
+
+<style>
+body {
+	font-family: 'Poppins', Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #ffffff;
+	font-size: 10px;
+}
+
+textarea {
+	resize: none; /* Disable manual resizing */
+	height: auto; /* Let it auto-expand up to max-height */
+	max-height: 120px; /* Set a maximum height */
+	line-height: 1.5em; /* Adjust line height for better readability */
+	font-size: 14px; /* Set the initial font size */
+	transition: font-size 0.2s ease;
+	/* Smooth transition for font resizing */
+	overflow: hidden !important; /* Remove scrollbars */
+	text-align: left !important; /* Ensure left alignment */
+}
+
+input, textarea {
+	text-align: left !important; /* Enforce left alignment */
+}
+
+/* Specific input and textarea styling - Left align and preserve other styles */
+input[name="amount"], input[name="loan_amount"], input[name="weight"],
+	input[name="value"], input[name="redemption_date"] {
+	text-align: left; /* Left-align the input fields */
+}
+
+.bill-number {
+	display: inline-block;
+	background-color: #ffeb3b; /* bright yellow */
+	padding: 1px 2px; /* Padding around the number */
+	font-weight: bold; /* Make it bold */
+}
+
+bill-number1 {
+	display: inline-block;
+	background-color: #ffeb3b; /* bright yellow */
+	padding: 1px 2px; /* Padding around the number */
+	font-weight: bold; /* Make it bold */
+	font-size: 14px;
+}
+
+.highlighted-amount {
+	background-color: #ffeb3b; /* bright yellow */
+	font-weight: bold;
+	padding: 2px 4px;
+	border-radius: 3px;
+	text-align: left;
+}
+
+/* Inputs readonly styling */
+input[readonly], textarea[readonly] {
+	background-color: #f8f8f8;
+	border: 1px solid #ccc;
+	font-weight: bold;
+	color: #d6382d;
+	border-radius: 4px;
+	padding: 4px 6px;
+}
+
+/* Highlight important fields */
+input[name="amount"], input[name="loan_amount"], input[name="weight"],
+	input[name="value"], input[name="redemption_date"] {
+	background-color: #ffeb3b;
+	border: 1px solid #e64a19;
+}
+
+.container {
+	width: 90%;
+	margin: 20px auto;
+	background: #fff;
+	padding: 15px;
+	border-radius: 10px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+	max-width: 250mm;
+}
+
+/* Header with logo and shop name */
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 15px;
+	margin-bottom: 10px;
+}
+
+.header img {
+	height: 50px;
+	width: auto;
+}
+
+.tamil-textshopname {
+	font-family: 'Noto Sans Tamil', sans-serif;
+	font-size: 22px;
+	font-weight: bold;
+	color: #b71c1c;
+	text-align: center;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+	letter-spacing: 1px;
+	margin: 0;
+}
+
+/* Tamil text styles */
+.tamil-textmajor, .tamil-textmajor1, .tamil-text, .tamil-textimp,
+	.tamil-textnormal, .tamil-textsign {
+	font-family: 'Noto Sans Tamil', 'Arial', sans-serif;
+	font-weight: bold;
+}
+
+.tamil-textmajor {
+	font-size: 17px;
+	color: #c62828;
+	text-align: center;
+}
+
+.tamil-textmajor1 {
+	font-size: 17px;
+	color: #fff;
+	background-color: #3f51b5;
+	padding: 6px;
+	border-radius: 4px;
+	text-align: center;
+}
+
+.tamil-textmajor2 {
+	font-size: 17px;
+	color: #fff; /* Red color */
+	background-color: #3f51b5;
+	padding: 6px;
+	border-radius: 4px;
+	text-align: center;
+	padding: 6px;
+}
+
+.tamil-text {
+	font-size: 11px;
+	color: #2e3d49;
+	text-align: center;
+}
+
+.tamil-textimp {
+	font-size: 14px;
+	color: #2e3d49;
+	text-align: center;
+}
+
+.tamil-textnormal label {
+	font-size: 14px;
+	color: #0d235e;
+	display: block;
+	margin-bottom: 2px;
+	font-weight: bold;
+}
+
+.tamil-textsign {
+	font-size: 14px;
+	color: #1b1b1b;
+	font-style: italic;
+	text-align: center;
+}
+
+/* Table styles */
+table {
+	width: 80%;
+	border-collapse: collapse;
+	margin: 10px auto;
+}
+
+table, th, td {
+	border: 1px solid #000;
+}
+
+th, td {
+	padding: 5px;
+	text-align: left;
+	font-size: 10px;
+	vertical-align: top;
+}
+
+th, td {
+	border: 1px solid #000;
+	padding: 5px;
+	text-align: Left; /* Changed from left to center */
+	vertical-align: middle; /* Changed from top to middle */
+	font-size: 10px;
+}
+
+th {
+	background-color: #00695c;
+	color: white;
+}
+
+/* Form input styles */
+.form-container input, .form-container select, .form-container textarea
+	{
+	font-family: 'Noto Sans Tamil', 'Arial', sans-serif;
+	font-weight: bold;
+	padding: 6px;
+	width: 90%;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 13px;
+	outline: none;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.form-container button {
+	background-color: #4CAF50;
+	color: white;
+	padding: 8px 16px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 11px;
+	width: 100%;
+	font-weight: bold;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.form-container button:hover {
+	background-color: #388e3c;
+}
+
+.action-buttons {
+	margin-top: 15px;
+	display: flex;
+	justify-content: center;
+}
+
+.action-buttons button {
+	padding: 8px 16px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 10px;
+	margin-left: 5px;
+}
+
+.action-buttons button.save {
+	background-color: #4CAF50;
+	color: white;
+	width: 100px;
+}
+
+/* Print styling */
+@media print {
+	body {
+		font-size: 8px; /* Adjust font size */
+	}
+	input, textarea {
+		border: none !important;
+		background: transparent !important;
+		text-align: left;
+	}
+	.action-buttons {
+		display: none;
+	}
+	@page {
+		size: A4;
+		margin: 5mm;
+	}
+
+	.container, .form-container, table {
+		page-break-inside: avoid;
+	}
+	table, th, td {
+		font-size: 8px; /* Make table font smaller to fit content */
+	}
+
+	.container {
+		max-height: 100%;
+		overflow: hidden;
+	}
+
+	.header, .form-container, .tamil-textshopname {
+		margin-bottom: 5px; /* Reduce bottom margin */
+	}
+	td, th {
+		padding: 3px 6px; /* Reduce padding in table cells */
+	}
+	.tamil-textmajor {
+		font-size: 11px; /* Reduce font size for major text */
+	}
+	.tamil-textnormal {
+		font-size: 8px; /* Reduce font size for normal text */
+	}
+	.highlighted-amount {
+		font-size: 10px; /* Reduce font size for highlighted amounts */
+	}
+}
+</style>
+</head>
+<body>
+
+	<div class="container">
+		<div class="form-container">
+			<form id="employeeForm" method="action=">
+				<!-- Header with logo and shop name -->
+
+				<table>
+					<tr>
+						<td
+							style="border: 0; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+							<div class="tamil-textmajor" style="flex: 1; text-align: left;">
+								உரிமை : <b>S.M.மணிமாறன்</b><br>Ph.No : 9894885245
+							</div>
+							<div style="flex: 1; text-align: center;">
+								<img
+									src="/home/dev089/Documents/Thinesh_Raajan/PROJECT/COMPIERE/COMPIERE_TR/src/images/ganesha.png"
+									alt=" "
+									style="height: 30px; width: auto; margin-left: 10px;" />
+							</div>
+						</td>
+						<td style="border: 0;">
+							<div class="tamil-textmajor" style="flex: 1;">
+								Bill No : <b><span class="bill-number">8011</span></b><br>Lic
+								No : 16/21-22
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div class="header">
+								<div class="tamil-textshopname">
+									<label>ஸ்ரீ லலித் பிரசண்ணா நகை அடகு கடை</label>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2"><div class="tamil-textmajor1">
+								<label>No 14, தருமராஜா கோவில் தெரு, திருப்பத்தூர் - 635
+									601.</label>
+							</div></td>
+					</tr>
+					<tr>
+						<td style="border: 0;">
+							<div class="tamil-textnormal">
+								<label style="display: inline-block; vertical-align: middle;">அடகு
+									வைத்த தேதி : </label> <input type="text" name="date" id="dateInput"
+									style="width: 100px;" value="25/06/2025" readonly />
+							</div>
+						</td>
+						<td style="border: 0; text-align: left;">
+							<div class="tamil-textnormal">
+								<label style="display: inline-block; vertical-align: middle;">கடன்
+									தொகை: </label> <span class="highlighted-amount"
+									style="font-size: 14px; color: #c62828;"><b>10000</b></span>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>அடகு வைத்தவர்களின் பெயர் & முகவரி </label>
+							</div></td>
+						<td><textarea id="detailsTextarea" name="name_address"
+								readonly style="width: 100%;">Thinesh Raajan S M , Tirupattur</textarea></td>
+					</tr>
+
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>தொலைபேசி </label>
+							</div></td>
+						<td><input type="phone" name="phone" value="6379300216"
+							readonly></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>வாரிசு </label>
+							</div></td>
+						<td><input type="text" name="heir" value="Shankar P" readonly></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>கடன் அசல் தொகை </label>
+							</div></td>
+						<td>
+						<span class="highlighted-amount" style="font-size: 14px; color: #c62828;"><b>10100</b></span>
+						</td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>அடகு வைக்கபட்ட நகைகளின் விவரம் </label>
+							</div></td>
+						<td><textarea id="detailsTextarea" name="details"
+								style="width: 100%;" readonly>Product 1,Product 2,Product 3,Product 4,Product 5,Product 6,Product 7,Product 8,Product 9,Product 10,Product 11,Product 12,Product 13,Product 14,Product 15</textarea></td>
+					</tr>
+
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>அடகு வைக்கபட்ட நகைகளின் எடை </label>
+							</div></td>
+						<td>
+						<span class="highlighted-amount" style="font-size: 14px; color: #c62828;"><b>25</b></span>
+						</td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>பொருளின் மதிப்பு </label>
+							</div></td>
+						<td>
+						<span class="highlighted-amount" style="font-size: 14px; color: #c62828;"><b>10100</b></span>
+							</td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>பொருளினை மீட்பதற்கு ஒப்புகொண்ட தேதி </label>
+							</div></td>
+						<td>
+						<span class="highlighted-amount" style="font-size: 14px; color: #c62828;"><b>25/06/2026</b></span>
+						</td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>மேர்படி பொருளை சரிபார்த்து என் முன்னால் அடகு
+									சிட்டுப்<br>பூர்த்தி செய்யப்படது<br>அடகு வைத்தவரின்
+									கையெழுத்து (அ) விரல் அச்சு
+								</label>
+							</div></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>மேலாண்மை பங்குதாரர் அல்லது முகவரின் </br> கையெழுத்து
+								</label>
+							</div></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td colspan="2"><div class="tamil-textmajor2">
+								<label>இந்த ரசித்தை கொண்டு வர தவிரினால் (அ) ஆதார் கார்டு
+									கண்டிப்பாக கொண்டு வரவும்</label>
+							</div></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal">
+								<label>இதில் கண்ட அசல் வட்டி தொகையை செலுத்தி </br> மேற் கொண்ட
+									அடகு பொருளைப் மீண்டும் </br> பெற்றுக் கொண்டேன்
+								</label>
+							</div></td>
+						<td><div class="tamil-textsign">
+								<label><br> <br> <br> <br>கையெழுத்து</label>
+							</div></td>
+					</tr>
+				</table>
+
+				<div class="action-buttons">
+					<button type="button" id=printBtn class="save"
+						onclick="printForm()">🖨️ Print</button>
+				</div>
+
+
+			</form>
+		</div>
+	</div>
+
+	<script>
+function printForm() {
+    window.print();
+}
+
+function autoResizeTextarea() {
+    const textareas = document.querySelectorAll('textarea'); // Select all textareas
+
+    textareas.forEach((textarea) => {
+        textarea.style.height = 'auto';
+        let fontSize = 14; 
+
+        const maxHeight = parseInt(getComputedStyle(textarea).maxHeight); // Get the max height from CSS
+        const scrollHeight = textarea.scrollHeight; // Get the current scroll height of the content
+
+        while (scrollHeight > maxHeight && fontSize > 8) {  // Limit font size to 8px
+            fontSize -= 1; // Reduce the font size
+            textarea.style.fontSize = fontSize + 'px'; // Set the new font size
+        }
+
+        textarea.style.height = Math.min(scrollHeight, maxHeight) + 'px';
+    });
+}
+
+window.addEventListener('load', () => {
+    autoResizeTextarea();
+});
+
+document.querySelectorAll('textarea').forEach(textarea => {
+    textarea.addEventListener('input', autoResizeTextarea);
+});
+
+
+</script>
+</body>
+</html>

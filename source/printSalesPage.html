@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lalith Jewellery</title>
+
+<style>
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #ffffff;
+	font-size: 10px;
+}
+
+textarea {
+	resize: none; /* Prevents the textarea from being resized */
+	width: 300px; /* You can specify a fixed width */
+	height: 50px; /* You can specify a fixed height */
+}
+
+.container {
+	width: 90%;
+	margin: auto;
+	background: #fff;
+	padding: 8px;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	margin-top: 10px;
+	max-width: 250mm;
+}
+
+.tamil-textshopname {
+	font-weight: bold; /* Makes the text bold */
+	font-family: 'Bamini', 'Latha', 'Vijaya', sans-serif;
+	/* Use a font that supports Tamil */
+	font-size: 24px; /* Adjust font size as needed */
+	font-weight: bold;
+	color: #d6382d; /* Change color as desired */
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	align-content: center;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+	color: #d6382d;
+	/* Add a subtle text shadow for style */
+}
+
+.tamil-textmajor {
+	font-weight: bold; /* Makes the text bold */
+	font-family: 'Bamini', 'Latha', 'Vijaya', sans-serif;
+	/* Use a font that supports Tamil */
+	font-size: 16px; /* Adjust font size as needed */
+	font-weight: bold;
+	color: #d6382d; /* Change color as desired */
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	align-content: center;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+	/* Add a subtle text shadow for style */
+}
+
+.tamil-textmajor1 {
+	font-weight: bold; /* Makes the text bold */
+	font-family: 'Bamini', 'Latha', 'Vijaya', sans-serif;
+	/* Use a font that supports Tamil */
+	font-size: 16px; /* Adjust font size as needed */
+	font-weight: bold;
+	color: #fff; /* Change color as desired */
+	background-color: #8095d1;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	align-content: center;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+	display: block;
+	/* Add a subtle text shadow for style */
+}
+
+.tamil-text {
+	font-weight: bold; /* Makes the text bold */
+	font-family: 'Latha', 'Arial', sans-serif;
+	/* Use a font that supports Tamil */
+	font-size: 11px; /* Adjust font size as needed */
+	color: #2e3d49; /* Change color as desired */
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	align-content: center;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+	/* Add a subtle text shadow for style */
+}
+
+.tamil-textimp {
+	font-weight: bold; /* Makes the text bold */
+	font-family: 'Latha', 'Arial', sans-serif;
+	/* Use a font that supports Tamil */
+	font-size: 12px; /* Adjust font size as needed */
+	color: #2e3d49; /* Change color as desired */
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	align-content: center;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0);
+	/* Add a subtle text shadow for style */
+}
+
+.tamil-textnormal {
+	font-weight: bold; /* Makes the text bold */
+	font-family: 'Latha', 'Arial', sans-serif;
+	/* Use a font that supports Tamil */
+	font-size: 14px; /* Adjust font size as needed */
+	color: #0d235e; /* Change color as desired */
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	align-content: center;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0);
+	/* Add a subtle text shadow for style */
+}
+
+.tamil-textsign {
+	font-weight: bold; /* Makes the text bold */
+	font-family: 'Latha', 'Arial', sans-serif;
+	/* Use a font that supports Tamil */
+	font-size: 12px; /* Adjust font size as needed */
+	color: #2e3d49; /* Change color as desired */
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0);
+	/* Add a subtle text shadow for style */
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+	display: none;
+}
+
+h1 {
+	text-align: center;
+	color: #333;
+	font-size: 14px;
+}
+
+table {
+	width: 80%;
+	border-collapse: collapse;
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+table, th, td {
+	border: 1px solid #000;
+}
+
+th, td {
+	padding: 5px;
+	text-align: left;
+	font-size: 10px;
+}
+
+th {
+	background-color: #4CAF50;
+	color: white;
+}
+
+.form-container {
+	margin-top: 10px;
+}
+
+.form-container input, .form-container select, .form-container textarea
+	{
+	font-family: 'Latha', 'Arial', sans-serif;
+	font-weight: bold;
+	padding: 6px;
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 13px;
+	outline: none;
+}
+
+.form-container button {
+	background-color: #4CAF50;
+	color: white;
+	padding: 8px 16px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 11px;
+	width: 100%;
+}
+
+.form-container button:hover {
+	background-color: #45a049;
+}
+
+.action-buttons {
+	margin-top: 15px;
+	display: flex;
+	justify-content: center;
+}
+
+.action-buttons button {
+	padding: 8px 16px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 10px;
+	margin-left: 5px;
+}
+
+.action-buttons button.save {
+	background-color: #4CAF50;
+	color: white;
+	width: 100px;
+}
+
+.action-buttons button.update {
+	background-color: #ff9800;
+	color: white;
+}
+
+.action-buttons button.edit {
+	background-color: #2196F3;
+	color: white;
+}
+
+.action-buttons button.delete {
+	background-color: #f44336;
+	color: white;
+}
+
+.action-buttons button.print {
+	background-color: #9E9E9E;
+	color: white;
+}
+
+.action-buttons button.pdf {
+	background-color: #673AB7;
+	color: white;
+}
+
+/* Print Style */
+@media print {
+	body {
+		font-family: Arial, sans-serif;
+		margin: 0;
+		padding: 0;
+		background-color: #ffffff;
+		font-size: 10px;
+	}
+	textarea {
+		resize: none; /* Prevents the textarea from being resized */
+		width: 300px; /* You can specify a fixed width */
+		height: 50px; /* You can specify a fixed height */
+	}
+	.container {
+		width: 90%;
+		margin: auto;
+		background: #fff;
+		padding: 8px;
+		border-radius: 8px;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		margin-top: 10px;
+		max-width: 250mm;
+	}
+	.tamil-textshopname {
+		font-weight: bold; /* Makes the text bold */
+		font-family: 'Bamini', 'Latha', 'Vijaya', sans-serif;
+		/* Use a font that supports Tamil */
+		font-size: 24px; /* Adjust font size as needed */
+		font-weight: bold;
+		color: #d6382d; /* Change color as desired */
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		align-content: center;
+		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+		color: #d6382d;
+		/* Add a subtle text shadow for style */
+	}
+	.tamil-textmajor {
+		font-weight: bold; /* Makes the text bold */
+		font-family: 'Bamini', 'Latha', 'Vijaya', sans-serif;
+		/* Use a font that supports Tamil */
+		font-size: 16px; /* Adjust font size as needed */
+		font-weight: bold;
+		color: #d6382d; /* Change color as desired */
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		align-content: center;
+		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+		/* Add a subtle text shadow for style */
+	}
+	.tamil-textmajor1 {
+		font-weight: bold; /* Makes the text bold */
+		font-family: 'Bamini', 'Latha', 'Vijaya', sans-serif;
+		/* Use a font that supports Tamil */
+		font-size: 16px; /* Adjust font size as needed */
+		font-weight: bold;
+		color: #fff; /* Change color as desired */
+		background-color: #8095d1;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		align-content: center;
+		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+		display: block;
+		/* Add a subtle text shadow for style */
+	}
+	.tamil-text {
+		font-weight: bold; /* Makes the text bold */
+		font-family: 'Latha', 'Arial', sans-serif;
+		/* Use a font that supports Tamil */
+		font-size: 12px; /* Adjust font size as needed */
+		color: #2e3d49; /* Change color as desired */
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		align-content: center;
+		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+		/* Add a subtle text shadow for style */
+	}
+	.tamil-textimp {
+		font-weight: bold; /* Makes the text bold */
+		font-family: 'Latha', 'Arial', sans-serif;
+		/* Use a font that supports Tamil */
+		font-size: 12px; /* Adjust font size as needed */
+		color: #2e3d49; /* Change color as desired */
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		align-content: center;
+		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0);
+		/* Add a subtle text shadow for style */
+	}
+	.tamil-textnormal {
+		font-weight: bold; /* Makes the text bold */
+		font-family: 'Latha', 'Arial', sans-serif;
+		/* Use a font that supports Tamil */
+		font-size: 12px; /* Adjust font size as needed */
+		color: #0d235e; /* Change color as desired */
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		align-content: center;
+		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0);
+		/* Add a subtle text shadow for style */
+	}
+	.tamil-textsign {
+		font-weight: bold; /* Makes the text bold */
+		font-family: 'Latha', 'Arial', sans-serif;
+		/* Use a font that supports Tamil */
+		font-size: 12px; /* Adjust font size as needed */
+		color: #2e3d49; /* Change color as desired */
+		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0);
+		/* Add a subtle text shadow for style */
+	}
+	input[type="date"]::-webkit-calendar-picker-indicator {
+		display: none;
+	}
+	h1 {
+		text-align: center;
+		color: #333;
+		font-size: 12px;
+	}
+	table {
+		width: 80%;
+		border-collapse: collapse;
+		margin-top: 10px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 10px;
+	}
+	table, th, td {
+		border: 1px solid #000;
+	}
+	th, td {
+		padding: 5px;
+		text-align: left;
+		font-size: 12px;
+	}
+	th {
+		background-color: #4CAF50;
+		color: white;
+	}
+	.form-container {
+		margin-top: 10px;
+	}
+	.form-container input, .form-container select, .form-container textarea
+		{
+		font-family: 'Latha', 'Arial', sans-serif;
+		font-weight: bold;
+		padding: 6px;
+		width: 90%;
+		margin-left: auto;
+		margin-right: auto;
+		border: 0;
+		font-size: 12px;
+		outline: none;
+	}
+	.action-buttons {
+		display: none;
+	}
+	@page {
+		size: A4;
+		margin: 10mm;
+	}
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="form-container">
+			<form id="employeeForm" method="" action="">
+
+				<table>
+					<tr>
+						<td colspan="2"><div class="tamil-textshopname"
+								align="center">
+								<label>  ஸ்ரீ லலித் பிரசன்னா நகை அடகு கடை    </label>
+							</div></td>
+					</tr>
+					<tr>
+						<td style="border: 0px;""><div class="tamil-textmajor">
+								<label>உரிமை : <b> S.M.மணிமாறன் </b></label> </br> Ph.No : 9894885245
+							</div></td>
+					</tr>
+					<tr>
+						<td colspan="2"><div class="tamil-textmajor1" align="center">
+								<label> No 14, தருமராஜா கோவில் தெரு, திருப்பத்தூர் - 635
+									601. </label>
+							</div></td>
+					</tr>
+					<tr>
+
+						<td style="border: 0px;"><div class="tamil-textnormal"
+								align="left">
+								 தேதி : <input type="text" name="date" id="dateInput"
+									style="width: 100px;" readonly/>
+							</div></td>
+
+						<td style="border: 0px;"><div class="tamil-textnormal"
+								align="right">
+								 விற்பனை தொகை : <input type="number" name="amount"
+									style="width: 100px;" readonly/>
+							</div></td>
+					</tr>
+
+					<tr>
+						<td><div class="tamil-textnormal" align="left">
+								<label> பெயர் :</label>
+							</div></td>
+						<td><input type="text" name="name" readonly></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal" align="left">
+								<label> முகவரி :</label>
+							</div></td>
+						<td><textarea name="address" readonly></textarea></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal" align="left">
+								<label>தொலைபேசி :</label>
+							</div></td>
+						<td><input type="phone" name="phone" readonly></td>
+					</tr>
+
+					<tr>
+						<td><div class="tamil-textnormal" align="left">
+								<label>நகைகளின் விவரம் :</label>
+							</div></td>
+						<td><textarea name="details" readonly></textarea></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal" align="left">
+								<label>நகைகளின் எடை :</label>
+							</div></td>
+						<td><input type="number" name="weight" readonly></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal" align="left">
+								<label>பெறப்பட்ட தொகை : </label>
+							</div></td>
+						<td><input type="number" name="value" readonly></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal" align="left">
+								<label>இருப்பு தொகை</label>
+							</div></td>
+						<td><input type="number" name="loan_amount" readonly></td>
+					</tr>
+					<tr>
+						<td><div class="tamil-textnormal" align="left">
+								<label>கையெழுத்து : </label>
+							</div></td>
+						<td><input type="number" name="loan_amount" readonly></td>
+					</tr>
+				</table>
+				<div class="action-buttons">
+					<button type="button" class="save" onclick="printForm()">Print</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script>
+function printForm() {
+    window.print(); 
+   }
+</script>
+
+</body>
+</html>
