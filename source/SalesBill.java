@@ -17,9 +17,41 @@ public class SalesBill {
 	private String BILL_NO = "";
 	private String STATUS = "";
 	private int AD_SALESDATA_ID = 0;
+	private String BILL_TYPES = ""; //07Oct2025
+	private String OLD_BALANCE_AMOUNT = ""; //24Oct2025
+	
+	//27Oct2025
+	private String GOLD_RATE = "";
+	private String SILVER_RATE = "";
+	private String DATE = "";
+	public String getGOLD_RATE() {
+		return GOLD_RATE;
+	}
+	public void setGOLD_RATE(String gOLD_RATE) {
+		GOLD_RATE = gOLD_RATE;
+	}
+	public String getSILVER_RATE() {
+		return SILVER_RATE;
+	}
+	public void setSILVER_RATE(String sILVER_RATE) {
+		SILVER_RATE = sILVER_RATE;
+	}
+	public String getDATE() {
+		return DATE;
+	}
+	public void setDATE(String dATE) {
+		DATE = dATE;
+	}
+	//27Oct2025
 
-
-
+	//24Oct2025
+	public String getOLDBALANCE_AMOUNT() {
+		return OLD_BALANCE_AMOUNT;
+	}
+	public void setOLDBALANCE_AMOUNT(String bALANCE_AMOUNT) {
+		OLD_BALANCE_AMOUNT = bALANCE_AMOUNT;
+	}
+	//24Oct2025
 	
 	
 	public int getAD_SALESDATA_ID() {
@@ -123,5 +155,12 @@ public class SalesBill {
 	public void setSTATUS(String sTATUS) {
 		STATUS = sTATUS;
 	}
-
+	//07Oct2025
+	public String getBILL_TYPES() {
+		return BILL_TYPES;
+	}
+	public void setBILL_TYPES(String bILL_TYPES) {
+		BILL_TYPES = bILL_TYPES;
+	}
+	//07Oct2025
 }

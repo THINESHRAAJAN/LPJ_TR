@@ -296,7 +296,9 @@ public class DBConnect {
 		ResultSet rs = null;
 
 		String query = "SELECT  AD_SALESDATA_ID, CUSTOMER_PHONE, SALES_DATE, CUSTOME_NAME, CUSTOMER_ADDRESS, PRODUCT, PRODUCT_TYPE, "
-				+ "PRODUCT_WEIGHT, SALES_AMOUNT, BALANCE_DESC, BALANCE_AMOUNT FROM AD_SALESDATA WHERE ISACTIVE='Y' "
+				+ "PRODUCT_WEIGHT, SALES_AMOUNT, BALANCE_DESC, BALANCE_AMOUNT "
+				+ " , DATE, GOLD_RATE, SILVER_RATE " //27Oct2025
+				+ "FROM AD_SALESDATA WHERE ISACTIVE='Y' "
 				+ "ORDER BY AD_SALESDATA_ID "; //08Aug2025
 
 		try {
@@ -317,7 +319,11 @@ public class DBConnect {
 				salesData.setSALES_AMOUNT(rs.getString("SALES_AMOUNT"));
 				salesData.setBALANCE_DESCRIPTION(rs.getString("BALANCE_DESC"));
 				salesData.setBALANCE_AMOUNT(rs.getString("BALANCE_AMOUNT"));
-				
+				//27Oct2025
+				salesData.setDATE(rs.getString("DATE"));
+				salesData.setGOLD_RATE(rs.getString("GOLD_RATE"));
+				salesData.setSILVER_RATE(rs.getString("SILVER_RATE"));
+				//27Oct2025
 				AdaguBillList.add(salesData);
 			}
 		} catch (SQLException e) {
@@ -345,8 +351,8 @@ public class DBConnect {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
-		String query = "SELECT  'ADAGU' AS BILLTYPE, BILL_NO, CUSTOMER_NAME AS CUSTOME_NAME, ADAGU_AMOUNT AS SALES_AMOUNT, ADAGU_DATE AS SALES_DATE, STATUS, REMAINING_AMOUNT AS BALANCE_AMOUNT, CUSTOMER_PHONE FROM AD_ADAGUDATA UNION ALL "
-				+ "SELECT  'SALES' AS BILLTYPE, '' AS BILL_NO, CUSTOME_NAME, SALES_AMOUNT, SALES_DATE, '' AS STATUS, BALANCE_AMOUNT, CUSTOMER_PHONE FROM AD_SALESDATA ";
+		String query = "SELECT  AD_ADAGUDATA_ID AS AD_SALESDATA_ID, 'ADAGU' AS BILLTYPE, BILL_NO, CUSTOMER_NAME AS CUSTOME_NAME, ADAGU_AMOUNT AS SALES_AMOUNT, ADAGU_DATE AS SALES_DATE, STATUS, REMAINING_AMOUNT AS BALANCE_AMOUNT, CUSTOMER_PHONE FROM AD_ADAGUDATA UNION ALL "
+				+ "SELECT  AD_SALESDATA_ID, 'SALES' AS BILLTYPE, '' AS BILL_NO, CUSTOME_NAME, SALES_AMOUNT, SALES_DATE, '' AS STATUS, BALANCE_AMOUNT, CUSTOMER_PHONE FROM AD_SALESDATA ";
 
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -355,6 +361,7 @@ public class DBConnect {
 
 			while (rs.next()) {
 				salesData = new SalesBill();
+				salesData.setAD_SALESDATA_ID(rs.getInt("AD_SALESDATA_ID")); //24Oct2025
 				salesData.setBILL_TYPE(rs.getString("BILLTYPE"));
 				salesData.setBILL_NO(rs.getString("BILL_NO"));
 				salesData.setCUSTOMER_NAME(rs.getString("CUSTOME_NAME"));
@@ -1629,8 +1636,9 @@ public class DBConnect {
 			ResultSet rs = null;
 
 			String query = "INSERT INTO AD_SALESDATA ( CUSTOMER_PHONE, SALES_DATE, CUSTOME_NAME, CUSTOMER_ADDRESS, PRODUCT,"
-					+ " PRODUCT_TYPE, PRODUCT_WEIGHT, SALES_AMOUNT, BALANCE_DESC, BALANCE_AMOUNT, SALES_AMOUNT2) VALUES "
-					+ "(?,?,?,?,?,?,?,?,?,?,?)";
+					+ " PRODUCT_TYPE, PRODUCT_WEIGHT, SALES_AMOUNT, BALANCE_DESC, BALANCE_AMOUNT, SALES_AMOUNT2, BILL_TYPES, STATUS, OLD_BALANCE_AMOUNT"
+					+ " , DATE, GOLD_RATE, SILVER_RATE ) VALUES " //27Oct2025
+					+ "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			try {
 				conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -1647,6 +1655,15 @@ public class DBConnect {
 				pstmt.setString(9, salesData.getBALANCE_DESCRIPTION());
 				pstmt.setString(10, salesData.getBALANCE_AMOUNT());
 				pstmt.setString(11, salesData.getSALES_AMOUNT2());
+				pstmt.setString(12, salesData.getBILL_TYPES()); //24Oct2025
+				pstmt.setString(13, salesData.getSTATUS().toUpperCase().trim().toString()); //24Oct2025
+				pstmt.setString(14, salesData.getOLDBALANCE_AMOUNT().toUpperCase().trim().toString()); //24Oct2025
+				//27Oct2025
+				pstmt.setString(15, salesData.getDATE());
+				pstmt.setString(16, salesData.getGOLD_RATE());
+				pstmt.setString(17, salesData.getSILVER_RATE());
+				//27Oct2025
+
 
 				int rowsAffected = pstmt.executeUpdate();
 
@@ -1853,6 +1870,166 @@ public class DBConnect {
 
 			return AdaguBillList;
 		}
+		
+		//24Oct2025
+		public boolean saveGSRate(GSRate gsRate) {
+			boolean isSaved = false;
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+
+			String query = "INSERT INTO GS_RATE ( DATE, GOLD_RATE, SILVER_RATE ) VALUES "
+					+ "(?,?,?)";
+
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				pstmt = conn.prepareStatement(query);
+
+				pstmt.setString(1, gsRate.getDATE());
+				pstmt.setString(2, gsRate.getGOLD_RATE());
+				pstmt.setString(3, gsRate.getSILVER_RATE());
+				
+
+				int rowsAffected = pstmt.executeUpdate();
+
+				if (rowsAffected > 0) {
+					isSaved = true;
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (rs != null)
+						rs.close();
+					if (pstmt != null)
+						pstmt.close();
+					if (conn != null)
+						conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return isSaved;
+		}
+		
+		public ArrayList<GSRate> loadAllGSRatesData() {
+			ArrayList<GSRate> GSDataList = new ArrayList<GSRate>();
+			GSRate gsData = new GSRate();
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+
+			String query = "SELECT DATE, GOLD_RATE, SILVER_RATE FROM GS_RATE ";
+
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				pstmt = conn.prepareStatement(query);
+				rs = pstmt.executeQuery();
+
+				while (rs.next()) {
+					gsData = new GSRate();
+					gsData.setDATE(rs.getString("DATE"));
+					gsData.setGOLD_RATE(rs.getString("GOLD_RATE"));
+					gsData.setSILVER_RATE(rs.getString("SILVER_RATE"));
+					GSDataList.add(gsData);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (rs != null)
+						rs.close();
+					if (pstmt != null)
+						pstmt.close();
+					if (conn != null)
+						conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return GSDataList;
+		}
+		
+		public GSRate getLatestGSRatesData() {
+			GSRate gsData = new GSRate();
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+
+			String query = "SELECT DATE, GOLD_RATE, SILVER_RATE FROM GS_RATE ORDER BY GS_RATE_ID DESC ";
+
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				pstmt = conn.prepareStatement(query);
+				rs = pstmt.executeQuery();
+
+				if (rs.next()) {
+					gsData = new GSRate();
+					gsData.setDATE(rs.getString("DATE"));
+					gsData.setGOLD_RATE(rs.getString("GOLD_RATE"));
+					gsData.setSILVER_RATE(rs.getString("SILVER_RATE"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (rs != null)
+						rs.close();
+					if (pstmt != null)
+						pstmt.close();
+					if (conn != null)
+						conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return gsData;
+		}
+		//24Oct2025
+		
+		//27Oct2025
+		public ArrayList<String> loadOldOpenBalance(String mobileNo) {
+			ArrayList<String> closingBillNums = new ArrayList<String>();
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+
+			String query = "SELECT * FROM ("
+					+ " SELECT 'ADAGU' AS BILLTYPE, CUSTOMER_PHONE AS CUSTOMER_PHONE, ADAGU_AMOUNT AS ADAGU_AMOUNT FROM AD_ADAGUDATA WHERE ISACTIVE='Y' AND (STATUS <> 'PAID' OR STATUS <> 'Paid' OR LENGTH(REMAINING_AMOUNT) > 0) AND CUSTOMER_PHONE = "+mobileNo+" "
+					+ " UNION ALL"
+					+ " SELECT 'SALES' AS BILLTYPE, CUSTOMER_PHONE AS CUSTOMER_PHONE, BALANCE_AMOUNT AS ADAGU_AMOUNT FROM AD_SALESDATA WHERE ISACTIVE='Y' AND (STATUS <> 'PAID' OR STATUS <> 'Paid' OR LENGTH(BALANCE_AMOUNT) > 0) AND CUSTOMER_PHONE = "+mobileNo+" "
+					+ " ) AS OLDBILLS ";
+
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				pstmt = conn.prepareStatement(query);
+				rs = pstmt.executeQuery();
+
+				while (rs.next()) {
+					closingBillNums.add(rs.getString("BILLTYPE")+" -> "+rs.getString("ADAGU_AMOUNT"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (rs != null)
+						rs.close();
+					if (pstmt != null)
+						pstmt.close();
+					if (conn != null)
+						conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return closingBillNums;
+		}
+		//27Oct2025
 		
 		public static void main(String...args) {
 			Connection conn = null;

@@ -9,28 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
-import org.bouncycastle.util.Properties;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
@@ -66,6 +48,52 @@ public class PrintBill {
 	public BigDecimal DISCOUNTAMT = new BigDecimal(0);
 	public BigDecimal BALANCEAMT = new BigDecimal(0);
 	public String SALESDATE = "";
+	public String BILL_TYPES = ""; //07Oct2025
+	private String BALANCE_DESCRIPTION = ""; //24Oct2025
+	
+	//24Oct2025
+	public String getBALANCE_DESCRIPTION() {
+		return BALANCE_DESCRIPTION;
+	}
+	public void setBALANCE_DESCRIPTION(String bALANCE_DESCRIPTION) {
+		BALANCE_DESCRIPTION = bALANCE_DESCRIPTION;
+	}
+	//24Oct2025
+	
+	//24Oct2025
+	private String GOLD_RATE = "";
+	private String SILVER_RATE = "";
+	private String DATE = "";
+	public String getGOLD_RATE() {
+		return GOLD_RATE;
+	}
+	public void setGOLD_RATE(String gOLD_RATE) {
+		GOLD_RATE = gOLD_RATE;
+	}
+	public String getSILVER_RATE() {
+		return SILVER_RATE;
+	}
+	public void setSILVER_RATE(String sILVER_RATE) {
+		SILVER_RATE = sILVER_RATE;
+	}
+	public String getDATE() {
+		return DATE;
+	}
+	public void setDATE(String dATE) {
+		DATE = dATE;
+	}
+	//24Oct2025
+	
+	//27Oct2025
+	private String PRODUCT_TYPE = "";
+	public String getPRODUCT_TYPE() {
+		return PRODUCT_TYPE;
+	}
+
+	public void setPRODUCT_TYPE(String pRODUCT_TYPE) {
+		PRODUCT_TYPE = pRODUCT_TYPE;
+	}
+	//27Oct2025
 	
 	public PrintBill(String lICENCENUM, String bILLNUM, String aDAGUDATE, BigDecimal aDAGUAMT, BigDecimal cUSTPHONE,
 			String cUSTNAME, String cUSTADDRESS, String cUSTHEIR, String cUSTHEIRRELATION, BigDecimal aDAGUACTUALAMT,
@@ -129,7 +157,7 @@ public class PrintBill {
 
 	public PrintBill(BigDecimal cUSTPHONE2, String sALESDATEFORMATTED, String cUSTNAME2, String cUSTADDRESS2,
 			String pRODUCTTYPE, StringBuffer pRODUCT2, String pRODUCTWEIGTH2, BigDecimal sALESAMT2, BigDecimal sALESAMT22,
-			String bALANCEDESC, BigDecimal bALANCEAMT2) {
+			String bALANCEDESC, BigDecimal bALANCEAMT2, String bILLTYPES) { //07Oct2025
 		CUSTPHONE = cUSTPHONE2;
 		SALESDATE = sALESDATEFORMATTED;
 		CUSTNAME = cUSTNAME2;
@@ -139,7 +167,39 @@ public class PrintBill {
 		SALESAMT = sALESAMT2;
 		SALESAMT2 = sALESAMT22;
 		BALANCEAMT = bALANCEAMT2;
+		BILL_TYPES = bILLTYPES; //07Oct2025
+		BALANCE_DESCRIPTION = bALANCEDESC; //24Oct2025
 	}
+	
+	//27Oct2025
+	public PrintBill(BigDecimal cUSTPHONE2, String sALESDATEFORMATTED, String cUSTNAME2, String cUSTADDRESS2,
+			String pRODUCTTYPE, StringBuffer pRODUCT2, String pRODUCTWEIGTH2, BigDecimal sALESAMT2, BigDecimal sALESAMT22,
+			String bALANCEDESC, BigDecimal bALANCEAMT2, String bILLTYPES, String dATE, String gOLD_RATE, String sILVER_RATE) { 
+		CUSTPHONE = cUSTPHONE2;
+		SALESDATE = sALESDATEFORMATTED;
+		CUSTNAME = cUSTNAME2;
+		CUSTADDRESS = cUSTADDRESS2;
+		PRODUCT = pRODUCT2;
+		PRODUCTWEIGTH = pRODUCTWEIGTH2;
+		SALESAMT = sALESAMT2;
+		SALESAMT2 = sALESAMT22;
+		BALANCEAMT = bALANCEAMT2;
+		BILL_TYPES = bILLTYPES;
+		BALANCE_DESCRIPTION = bALANCEDESC;
+		DATE = dATE;
+		GOLD_RATE = gOLD_RATE;
+		SILVER_RATE = sILVER_RATE;
+	}
+	//27Oct2025
+	
+	// 07Oct2025
+	public String getBILL_TYPES() {
+		return BILL_TYPES;
+	}
+	public void setBILL_TYPES(String bILL_TYPES) {
+		BILL_TYPES = bILL_TYPES;
+	}
+	// 07Oct2025
 
 	public String getLICENCENUM() {
 		return LICENCENUM;
@@ -621,7 +681,7 @@ public class PrintBill {
 					+ "	.highlighted-amount {\n"
 					+ "		font-size: 14px; /* Reduce font size for highlighted amounts */\n"
 					+ "	}\n"
-					+ "#printFooter {\n"
+					+ "/*#printFooter {\n"
 					+ "    position: fixed;\n"
 					+ "    bottom: 5mm;\n"
 					+ "    left: 0;\n"
@@ -629,7 +689,7 @@ public class PrintBill {
 					+ "    text-align: center;\n"
 					+ "    font-size: 9px;\n"
 					+ "    color: #555;\n"
-					+ "  }\n"
+					+ "  }*/\n"
 					+ "}\n"
 					+ "</style>\n"
 					+ "</head>\n"
@@ -728,7 +788,7 @@ public class PrintBill {
 					+ "								<label>4. அடகு வைக்கபட்ட நகைகளின் விவரம் </label>\n"
 					+ "							</div></td>\n"
 					+ "						<td><textarea id=\"detailsTextarea\" name=\"details\"\n"
-					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT()+"</textarea></td>\n"
+					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT_TYPE()+"\n"+print.getPRODUCT()+"</textarea></td>\n"
 					+ "					</tr>\n"
 					+ "\n"
 					+ "					<tr>\n"
@@ -782,7 +842,9 @@ public class PrintBill {
 					+ "								<label>இதில் கண்ட அசல் வட்டி தொகையை செலுத்தி </br> மேற் கொண்ட\n"
 					+ "									அடகு பொருளைப் மீண்டும் </br> பெற்றுக் கொண்டேன்\n"
 					+ "								</label>\n"
-					+ "							</div></td>\n"
+					+ "							</div>"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ "</td>\n"
 					+ "						<td><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br>கையெழுத்து</label>\n"
 					+ "							</div></td>\n"
@@ -796,12 +858,12 @@ public class PrintBill {
 					+ "\n"
 					+ "\n"
 					+ "			</form>\n"
-					+"<div id=\"printFooter\" style=\"text-align: center; font-size: 10px; color: #555; margin-top: 20px;\"></div>\n"
 					+ "		</div>\n"
 					+ "	</div>\n"
 					+ "\n"
 					+ "	<script>\n"
 					+ "function printForm() {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    window.print();\n"
 					+ "}\n"
 					+ "\n"
@@ -843,6 +905,7 @@ public class PrintBill {
 					+ "}\n"
 					+ "\n"
 					+ "window.addEventListener('load', () => {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    autoResizeTextarea();\n"
 					+ "});\n"
 					+ "\n"
@@ -1195,7 +1258,7 @@ public class PrintBill {
 					+ "	.highlighted-amount {\n"
 					+ "		font-size: 14px; /* Reduce font size for highlighted amounts */\n"
 					+ "	}\n"
-					+ "#printFooter {\n"
+					+ "/*#printFooter {\n"
 					+ "    position: fixed;\n"
 					+ "    bottom: 5mm;\n"
 					+ "    left: 0;\n"
@@ -1203,7 +1266,7 @@ public class PrintBill {
 					+ "    text-align: center;\n"
 					+ "    font-size: 9px;\n"
 					+ "    color: #555;\n"
-					+ "  }\n"
+					+ "  }*/\n"
 					+ "}\n"
 					+ "</style>\n"
 					+ "</head>\n"
@@ -1304,7 +1367,7 @@ public class PrintBill {
 					+ "								<label>4. அடகு வைக்கபட்ட நகைகளின் விவரம் </label>\n"
 					+ "							</div></td>\n"
 					+ "						<td><textarea id=\"detailsTextarea\" name=\"details\"\n"
-					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT()+"</textarea></td>\n"
+					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT_TYPE()+"\n"+print.getPRODUCT()+"</textarea></td>\n"
 					+ "					</tr>\n"
 					+ "\n"
 					+ "					<tr>\n"
@@ -1358,7 +1421,9 @@ public class PrintBill {
 					+ "								<label>இதில் கண்ட அசல் வட்டி தொகையை செலுத்தி </br> மேற் கொண்ட\n"
 					+ "									அடகு பொருளைப் மீண்டும் </br> பெற்றுக் கொண்டேன்\n"
 					+ "								</label>\n"
-					+ "							</div></td>\n"
+					+ "							</div>"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ "</td>\n"
 					+ "						<td><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br>கையெழுத்து</label>\n"
 					+ "							</div></td>\n"
@@ -1373,11 +1438,11 @@ public class PrintBill {
 					+ "\n"
 					+ "			</form>\n"
 					+ "		</div>\n"
-					+"<div id=\"printFooter\" style=\"text-align: center; font-size: 10px; color: #555; margin-top: 20px;\"></div>\n"
 					+ "	</div>\n"
 					+ "\n"
 					+ "	<script>\n"
 					+ "function printForm() {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    window.print();\n"
 					+ "}\n"
 					+ "\n"
@@ -1419,6 +1484,7 @@ public class PrintBill {
 					+ "}\n"
 					+ "\n"
 					+ "window.addEventListener('load', () => {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    autoResizeTextarea();\n"
 					+ "});\n"
 					+ "\n"
@@ -1630,6 +1696,31 @@ public class PrintBill {
 		
 		String logoUrl = "C:\\Users\\SM Manimaran\\Desktop\\LPJ\\logo.png";
 		logoUrl = "C:\\Users\\SM Manimaran\\OneDrive\\Desktop\\LPJ\\logo.png";
+		
+		String bisLogo = "C:\\Users\\SM Manimaran\\OneDrive\\Desktop\\LPJ\\bis.png"; //24Oct2025
+		
+		//08Oct2025
+		if(null != print && print.getBILL_TYPES().startsWith("91")) {
+			print.setBILL_TYPES(" (91.6 , BIS KDM) ");
+		}//08Oct2025
+		
+		//24Oct2025
+		/*GSRate latestGSRate = new GSRate();
+		DBConnect getLatest = new DBConnect();
+		latestGSRate = getLatest.getLatestGSRatesData();*/
+		StringBuffer GSRate = new StringBuffer();
+		/*if(null != latestGSRate)
+		{
+			print.setDATE(latestGSRate.getDATE());
+			print.setGOLD_RATE("Gold ₹/gm : "+latestGSRate.getGOLD_RATE());
+			print.setSILVER_RATE("Silver ₹/gm : "+latestGSRate.getSILVER_RATE());
+		}else {
+			print.setDATE("");
+			print.setGOLD_RATE("");
+			print.setSILVER_RATE("");
+		}*/
+		GSRate.append(""+print.getGOLD_RATE()+" \n "+print.getSILVER_RATE()); //27Oct2025
+		//24Oct2025
 
 		try {
 			// Generate HTML content (could also be from a file)
@@ -1729,6 +1820,10 @@ public class PrintBill {
 					+ "	border-radius: 10px;\n"
 					+ "	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);\n"
 					+ "	max-width: 250mm;\n"
+					+ " background-image: url('"+bisLogo.toString()+"');\n"
+					+ " background-repeat: no-repeat;\n"
+					+ " background-position: center center;\n"
+					+ " background-size: 100px 100px;\n"
 					+ "}\n"
 					+ "\n"
 					+ "/* Header with logo and shop name */\n"
@@ -1943,7 +2038,7 @@ public class PrintBill {
 					+ "	.highlighted-amount {\n"
 					+ "		font-size: 14px; /* Reduce font size for highlighted amounts */\n"
 					+ "	}\n"
-					+ "#printFooter {\n"
+					+ "/*#printFooter {\n"
 					+ "    position: fixed;\n"
 					+ "    bottom: 5mm;\n"
 					+ "    left: 0;\n"
@@ -1951,7 +2046,7 @@ public class PrintBill {
 					+ "    text-align: center;\n"
 					+ "    font-size: 9px;\n"
 					+ "    color: #555;\n"
-					+ "  }\n"
+					+ "  }*/\n"
 					+ "}\n"
 					+ "</style>\n"
 					+ "</head>\n"
@@ -1996,85 +2091,102 @@ public class PrintBill {
 					+ "						</td>\n"
 					+ "					</tr>\n"
 					+ "					<tr>\n"
-					+ "						<td colspan=\"2\"><div class=\"tamil-textmajor1\">\n"
+					+ "						<td colspan=\"2\"  style=\"border: none\"><div class=\"tamil-textmajor1\">\n"
 					+ "								<label>No 14, தருமராஜா கோவில் தெரு, திருப்பத்தூர் - 635\n"
 					+ "									601.</label>\n"
 					+ "							</div></td>\n"
 					+ "					</tr>\n"
 					+ "					<tr>\n"
-					+ "						<td style=\"border: 0;\">\n"
-					+ "							<div class=\"tamil-textnormal\">\n"
-					+ "								<label style=\"display: inline-block; vertical-align: middle;\">தேதி : </label> "
-					+ " <span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESDATE()+"</b></span>"
-					/*+ "<input type=\"text\" name=\"date\" id=\"dateInput\"\n"
-					+ "									style=\"width: 100px;\" value=\""+print.getSALESDATE()+"\" readonly />\n"*/
-					+ "							</div>\n"
-					+ "						</td>\n"
+					
+					+ "<tr>\n"
+					+ "						<td style=\"border: none\"></td>\n"
+					+ "						<td style=\"border: none\"></td>\n"
+					+ "					</tr>"
+					+ "<tr>\n"
 					+ "						<td style=\"border: 0; text-align: left;\">\n"
 					+ "							<div class=\"tamil-textnormal\">\n"
-					+ "								<label style=\"display: inline-block; vertical-align: middle;\">விற்பனை தொகை :</label> <span class=\"highlighted-amount\"\n"
-					+ "									style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESAMT()+"</b></span>\n"
+					+ "								<label style=\"display: inline-block; vertical-align: middle;\">தொலைபேசி\n"
+					+ "									:</label> <span class=\"highlighted-amount\"\n"
+					+ "									style=\"font-size: 14px; color: #c62828;\"><b>"+print.getCUSTPHONE()+"</b></span>\n"
 					+ "							</div>\n"
 					+ "						</td>\n"
-					+ "					</tr>\n"
-					+ "					<tr>\n"
-					+ "						<td><div class=\"tamil-textnormal\">\n"
+					+ "						<td style=\"border: 0;\">\n"
+					+ "							<div class=\"tamil-textnormal\">\n"
+					+ "								<label style=\"display: inline-block; vertical-align: middle;\">தேதி\n"
+					+ "									: </label> <span class=\"highlighted-amount\"\n"
+					+ "									style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESDATE()+"</b></span>\n"
+					+ "							</div>\n"
+					+ "						</td>\n"
+					+ "					</tr>"
+					+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
 					+ "								<label> 1. பெயர் & முகவரி </label>\n"
 					+ "							</div></td>\n"
-					+ "						<td><textarea id=\"detailsTextarea\" name=\"name_address\"\n"
+					+ "						<td style=\"border: none\"><textarea id=\"detailsTextarea\" name=\"name_address\"\n"
 					+ "								readonly style=\"width: 100%;\">\n"
 					+ " "+print.getCUSTNAME()+"\n"+print.getCUSTHEIRRELATION()+" "+print.getCUSTHEIR()+"\n"+print.getCUSTADDRESS()+""
 					+ " \n"
 					+ "</textarea></td>\n"
 					+ "					</tr>\n"
 					+ "\n"
+				
 					+ "					<tr>\n"
-					+ "						<td><div class=\"tamil-textnormal\">\n"
-					+ "								<label>2. தொலைபேசி </label>\n"
+					+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+					+ "								<label> 2. நகைகளின் விவரம் <br><br> &nbsp;&nbsp; "+print.getBILL_TYPES()+" </label>\n"
 					+ "							</div></td>\n"
-					+ "						<td><input type=\"phone\" name=\"phone\" value=\""+print.getCUSTPHONE()+"\"\n"
-					+ "							readonly></td>\n"
-					+ "					</tr>\n"
-					+ "					\n"
-					+ "					<tr>\n"
-					+ "						<td><div class=\"tamil-textnormal\">\n"
-					+ "								<label> 3. நகைகளின் விவரம் <br><br> &nbsp;&nbsp; (91.6 , BIS KDM) </label>\n"
-					+ "							</div></td>\n"
-					+ "						<td><textarea id=\"detailsTextarea\" name=\"details\"\n"
-					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT()+"</textarea></td>\n"
+					+ "						<td style=\"border: none\"><textarea id=\"detailsTextarea\" name=\"details\"\n"
+					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT_TYPE()+"\n"+print.getPRODUCT()+"</textarea></td>\n"
 					+ "					</tr>\n"
 					+ "\n"
 					+ "					<tr>\n"
-					+ "						<td><div class=\"tamil-textnormal\">\n"
-					+ "								<label> 4. நகைகளின் எடை </label>\n"
+					+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+					+ "								<label> 3. பொருளின் எடை </label>\n"
 					+ "							</div></td>\n"
-					+ "						<td>\n"
+					+ "						<td style=\"border: none\">\n"
 					+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getPRODUCTWEIGTH()+"</b></span>\n"
 					+ "						</td>\n"
 					+ "					</tr>\n"
 					+ "					<tr>\n"
-					+ "						<td><div class=\"tamil-textnormal\">\n"
-					+ "								<label> 5. பெறப்பட்ட தொகை   </label>\n"
+					+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+					+ "								<label> 4. கிரைய ரூபாய் ₹   </label>\n"
 					+ "							</div></td>\n"
-					+ "						<td>\n"
-					+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESAMT2()+"</b></span>\n"
+					+ "						<td style=\"border: none\">\n"
+					+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESAMT()+"</b></span>\n"
 					+ "							</td>\n"
 					+ "					</tr>\n"
 					+ "					<tr>\n"
-					+ "						<td><div class=\"tamil-textnormal\">\n"
-					+ "								<label> 6. இருப்பு தொகை </label>\n"
+					+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+					+ "								<label> 5. உடன் கச்சா வரவு ரூபாய் ₹  </label>\n"
 					+ "							</div></td>\n"
-					+ "						<td>\n"
+					+ "						<td style=\"border: none\">\n"
+					+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESAMT2()+"</b></span>\n"
+					+ "						</td>\n"
+					+ "					</tr>\n"
+					+ "					<tr>\n"
+					+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+					+ "								<label> 6. உடன் வரவு ரூபாய் ₹ </label>\n"
+					+ "							</div></td>\n"
+					+ "						<td style=\"border: none\">\n"
 					+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getBALANCEAMT()+"</b></span>\n"
+					+ "						</td>\n"
+					+ "					</tr>\n"
+					+ "					<tr>\n"
+					+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+					+ "								<label> 7. மீதீ பாக்கி ரூபாய் ₹ </label>\n"
+					+ "							</div></td>\n"
+					+ "						<td style=\"border: none\">\n"
+					+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getBALANCE_DESCRIPTION()+"</b></span>\n"
 					+ "						</td>\n"
 					+ "					</tr>\n"
 					+ "					\n"
 					+ "					<tr>\n"
-					+ "						<td><div class=\"tamil-textsign\">\n"
+					+ "						<td style=\"border: none\"><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br> நகை எடுப்பவரின் </br> கையெழுத்து\n"
 					+ "								</label>\n"
-					+ "							</div></td>\n"
-					+ "						<td><div class=\"tamil-textsign\">\n"
+					+ "							</div>"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ " <div id=\"printGSRate\" style=\"text-align: left; font-size: 6px; color: red;\"><span>"+GSRate.toString()+"</span></div>\n"
+					+ "</td>\n"
+					+ "						<td style=\"border: none\"><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br>நகை விற்பவரின்  </br> கையெழுத்து</label>\n"
 					+ "							</div></td>\n"
 					+ "					</tr>\n"
@@ -2088,11 +2200,11 @@ public class PrintBill {
 					+ "\n"
 					+ "			</form>\n"
 					+ "		</div>\n"
-					+"<div id=\"printFooter\" style=\"text-align: center; font-size: 10px; color: #555; margin-top: 20px;\"></div>\n"
 					+ "	</div>\n"
 					+ "\n"
 					+ "	<script>\n"
 					+ "function printForm() {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    window.print();\n"
 					+ "}\n"
 					+ "\n"
@@ -2134,6 +2246,7 @@ public class PrintBill {
 					+ "}\n"
 					+ "\n"
 					+ "window.addEventListener('load', () => {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    autoResizeTextarea();\n"
 					+ "});\n"
 					+ "\n"
@@ -2176,6 +2289,12 @@ public class PrintBill {
 		StringBuffer printHtml = new StringBuffer();
 		PrintBill print = new PrintBill();
 		String logoUrl = "/home/dev089/Documents/Thinesh_Raajan/PROJECT/COMPIERE/LPJ_TR/src/images/ganesha.png";
+		String bisLogo = "";
+		
+		// 24Oct2025
+		StringBuffer GSRate = new StringBuffer();
+		GSRate.append("");
+		// 24Oct2025
 
 		printHtml.append("<!DOCTYPE html>\n"
 				+ "<html lang=\"en\">\n"
@@ -2270,6 +2389,10 @@ public class PrintBill {
 				+ "	border-radius: 10px;\n"
 				+ "	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);\n"
 				+ "	max-width: 250mm;\n"
+				+ " background-image: url('"+bisLogo+"');\n"
+				+ " background-repeat: no-repeat;\n"
+				+ " background-position: center center;\n"
+				+ " background-size: 100px 100px;\n"
 				+ "}\n"
 				+ "\n"
 				+ "/* Header with logo and shop name */\n"
@@ -2484,7 +2607,7 @@ public class PrintBill {
 				+ "	.highlighted-amount {\n"
 				+ "		font-size: 14px; /* Reduce font size for highlighted amounts */\n"
 				+ "	}\n"
-				+ "#printFooter {\n"
+				+ "/*#printFooter {\n"
 				+ "    position: fixed;\n"
 				+ "    bottom: 5mm;\n"
 				+ "    left: 0;\n"
@@ -2492,7 +2615,7 @@ public class PrintBill {
 				+ "    text-align: center;\n"
 				+ "    font-size: 9px;\n"
 				+ "    color: #555;\n"
-				+ "  }\n"
+				+ "  }*/\n"
 				+ "}\n"
 				+ "</style>\n"
 				+ "</head>\n"
@@ -2515,7 +2638,7 @@ public class PrintBill {
 				+ "									src=\""+logoUrl.toString()+"\"\n"
 				+ "									alt=\" \"\n"
 				+ "									style=\"height: 30px; width: auto; margin-left: 10px;\" />\n"
-				+ " 									<br><label style=\"font-size: 13px;color: #c62828;font-weight: bold;\">நகை அடகு வியாபாரம்</label> \n"
+				+ " 									<br><label style=\"font-size: 13px;color: #c62828;font-weight: bold;\">Estimate</label> \n"
 				+ "							</div>\n"
 				+ "						</td>\n"
 				+ "						<td style=\"border: 0;\">\n"
@@ -2528,91 +2651,111 @@ public class PrintBill {
 				+ "						<td colspan=\"2\">\n"
 				+ "							<div class=\"header\">\n"
 				+ "								<div class=\"tamil-textshopname\">\n"
-				+ "									<label>ஸ்ரீ லலித் பிரசண்ணா நகை அடகு கடை</label>\n"
+				+ "									<label>ஸ்ரீ லலித் பிரசண்ணா நகை அடகு வியாபாரம்</label>\n"
+				+ " <br /> <span\n"
+				+ "										class=\"highlighted-amount\"\n"
+				+ "										style=\"font-size: 14px; color: #c62828;\"><b>ஜுவல்லர்ஸ்</b></span>"	
 				+ "								</div>\n"
 				+ "							</div>\n"
 				+ "						</td>\n"
 				+ "					</tr>\n"
 				+ "					<tr>\n"
-				+ "						<td colspan=\"2\"><div class=\"tamil-textmajor1\">\n"
+				+ "						<td colspan=\"2\"  style=\"border: none\"><div class=\"tamil-textmajor1\">\n"
 				+ "								<label>No 14, தருமராஜா கோவில் தெரு, திருப்பத்தூர் - 635\n"
 				+ "									601.</label>\n"
 				+ "							</div></td>\n"
 				+ "					</tr>\n"
 				+ "					<tr>\n"
-				+ "						<td style=\"border: 0;\">\n"
-				+ "							<div class=\"tamil-textnormal\">\n"
-				+ "								<label style=\"display: inline-block; vertical-align: middle;\">தேதி : </label> "
-				+ " <span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESDATE()+"</b></span>"
-				/*+ "<input type=\"text\" name=\"date\" id=\"dateInput\"\n"
-				+ "									style=\"width: 100px;\" value=\""+print.getSALESDATE()+"\" readonly />\n"*/
-				+ "							</div>\n"
-				+ "						</td>\n"
+				
+				+ "<tr>\n"
+				+ "						<td style=\"border: none\"></td>\n"
+				+ "						<td style=\"border: none\"></td>\n"
+				+ "					</tr>"
+				+ "<tr>\n"
 				+ "						<td style=\"border: 0; text-align: left;\">\n"
 				+ "							<div class=\"tamil-textnormal\">\n"
-				+ "								<label style=\"display: inline-block; vertical-align: middle;\">விற்பனை தொகை :</label> <span class=\"highlighted-amount\"\n"
-				+ "									style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESAMT()+"</b></span>\n"
+				+ "								<label style=\"display: inline-block; vertical-align: middle;\">தொலைபேசி\n"
+				+ "									:</label> <span class=\"highlighted-amount\"\n"
+				+ "									style=\"font-size: 14px; color: #c62828;\"><b>"+print.getCUSTPHONE()+"</b></span>\n"
 				+ "							</div>\n"
 				+ "						</td>\n"
-				+ "					</tr>\n"
-				+ "					<tr>\n"
-				+ "						<td><div class=\"tamil-textnormal\">\n"
+				+ "						<td style=\"border: 0;\">\n"
+				+ "							<div class=\"tamil-textnormal\">\n"
+				+ "								<label style=\"display: inline-block; vertical-align: middle;\">தேதி\n"
+				+ "									: </label> <span class=\"highlighted-amount\"\n"
+				+ "									style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESDATE()+"</b></span>\n"
+				+ "							</div>\n"
+				+ "						</td>\n"
+				+ "					</tr>"
+				+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
 				+ "								<label> 1. பெயர் & முகவரி </label>\n"
 				+ "							</div></td>\n"
-				+ "						<td><textarea id=\"detailsTextarea\" name=\"name_address\"\n"
+				+ "						<td style=\"border: none\"><textarea id=\"detailsTextarea\" name=\"name_address\"\n"
 				+ "								readonly style=\"width: 100%;\">\n"
 				+ " "+print.getCUSTNAME()+"\n"+print.getCUSTHEIRRELATION()+" "+print.getCUSTHEIR()+"\n"+print.getCUSTADDRESS()+""
 				+ " \n"
 				+ "</textarea></td>\n"
 				+ "					</tr>\n"
 				+ "\n"
+			
 				+ "					<tr>\n"
-				+ "						<td><div class=\"tamil-textnormal\">\n"
-				+ "								<label>2. தொலைபேசி </label>\n"
+				+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+				+ "								<label> 2. நகைகளின் விவரம் <br><br> &nbsp;&nbsp; "+print.getBILL_TYPES()+" </label>\n"
 				+ "							</div></td>\n"
-				+ "						<td><input type=\"phone\" name=\"phone\" value=\""+print.getCUSTPHONE()+"\"\n"
-				+ "							readonly></td>\n"
-				+ "					</tr>\n"
-				+ "					\n"
-				+ "					<tr>\n"
-				+ "						<td><div class=\"tamil-textnormal\">\n"
-				+ "								<label> 3. நகைகளின் விவரம் <br><br> &nbsp;&nbsp; (91.6 , BIS KDM) </label>\n"
-				+ "							</div></td>\n"
-				+ "						<td><textarea id=\"detailsTextarea\" name=\"details\"\n"
-				+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT()+"</textarea></td>\n"
+				+ "						<td style=\"border: none\"><textarea id=\"detailsTextarea\" name=\"details\"\n"
+				+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT_TYPE()+"\n"+print.getPRODUCT()+"</textarea></td>\n"
 				+ "					</tr>\n"
 				+ "\n"
 				+ "					<tr>\n"
-				+ "						<td><div class=\"tamil-textnormal\">\n"
-				+ "								<label> 4. நகைகளின் எடை </label>\n"
+				+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+				+ "								<label> 3. பொருளின் எடை </label>\n"
 				+ "							</div></td>\n"
-				+ "						<td>\n"
+				+ "						<td style=\"border: none\">\n"
 				+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getPRODUCTWEIGTH()+"</b></span>\n"
 				+ "						</td>\n"
 				+ "					</tr>\n"
 				+ "					<tr>\n"
-				+ "						<td><div class=\"tamil-textnormal\">\n"
-				+ "								<label> 5. பெறப்பட்ட தொகை   </label>\n"
+				+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+				+ "								<label> 4. கிரைய ரூபாய் ₹   </label>\n"
 				+ "							</div></td>\n"
-				+ "						<td>\n"
-				+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESAMT2()+"</b></span>\n"
+				+ "						<td style=\"border: none\">\n"
+				+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESAMT()+"</b></span>\n"
 				+ "							</td>\n"
 				+ "					</tr>\n"
 				+ "					<tr>\n"
-				+ "						<td><div class=\"tamil-textnormal\">\n"
-				+ "								<label> 6. இருப்பு தொகை </label>\n"
+				+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+				+ "								<label> 5. உடன் கச்சா வரவு ரூபாய் ₹  </label>\n"
 				+ "							</div></td>\n"
-				+ "						<td>\n"
+				+ "						<td style=\"border: none\">\n"
+				+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getSALESAMT2()+"</b></span>\n"
+				+ "						</td>\n"
+				+ "					</tr>\n"
+				+ "					<tr>\n"
+				+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+				+ "								<label> 6. உடன் வரவு ரூபாய் ₹ </label>\n"
+				+ "							</div></td>\n"
+				+ "						<td style=\"border: none\">\n"
 				+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getBALANCEAMT()+"</b></span>\n"
+				+ "						</td>\n"
+				+ "					</tr>\n"
+				+ "					<tr>\n"
+				+ "						<td style=\"border: none\"><div class=\"tamil-textnormal\">\n"
+				+ "								<label> 7. மீதீ பாக்கி ரூபாய் ₹ </label>\n"
+				+ "							</div></td>\n"
+				+ "						<td style=\"border: none\">\n"
+				+ "						<span class=\"highlighted-amount\" style=\"font-size: 14px; color: #c62828;\"><b>"+print.getBALANCE_DESCRIPTION()+"</b></span>\n"
 				+ "						</td>\n"
 				+ "					</tr>\n"
 				+ "					\n"
 				+ "					<tr>\n"
-				+ "						<td><div class=\"tamil-textsign\">\n"
+				+ "						<td style=\"border: none\"><div class=\"tamil-textsign\">\n"
 				+ "								<label><br> <br> <br> <br> நகை எடுப்பவரின் </br> கையெழுத்து\n"
 				+ "								</label>\n"
-				+ "							</div></td>\n"
-				+ "						<td><div class=\"tamil-textsign\">\n"
+				+ "							</div>"
+				+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+				+ " <div id=\"printGSRate\" style=\"text-align: left; font-size: 6px; color: red;\"><span>"+GSRate.toString()+"</span></div>\n"
+				+ "</td>\n"
+				+ "						<td style=\"border: none\"><div class=\"tamil-textsign\">\n"
 				+ "								<label><br> <br> <br> <br>நகை விற்பவரின்  </br> கையெழுத்து</label>\n"
 				+ "							</div></td>\n"
 				+ "					</tr>\n"
@@ -2630,6 +2773,7 @@ public class PrintBill {
 				+ "\n"
 				+ "	<script>\n"
 				+ "function printForm() {\n"
+				+ "updatePrintFooterDateTime();\n"
 				+ "    window.print();\n"
 				+ "}\n"
 				+ "\n"
@@ -2651,8 +2795,6 @@ public class PrintBill {
 				+ "	  footer.textContent = ` அச்சிடப்பட்ட தேதி மற்றும் நேரம்: ${formattedDateTime}`;\n"
 				+ "	}\n"
 				+ "\n"
-				+ "	window.onbeforeprint = updatePrintFooterDateTime;"
-				+ "\n"
 				+ "function autoResizeTextarea() {\n"
 				+ "    const textareas = document.querySelectorAll('textarea'); // Select all textareas\n"
 				+ "\n"
@@ -2673,6 +2815,7 @@ public class PrintBill {
 				+ "}\n"
 				+ "\n"
 				+ "window.addEventListener('load', () => {\n"
+				+ "updatePrintFooterDateTime();\n"
 				+ "    autoResizeTextarea();\n"
 				+ "});\n"
 				+ "\n"
@@ -3012,7 +3155,7 @@ public class PrintBill {
 					+ "	.highlighted-amount {\n"
 					+ "		font-size: 14px; /* Reduce font size for highlighted amounts */\n"
 					+ "	}\n"
-					+ "#printFooter {\n"
+					+ "/*#printFooter {\n"
 					+ "    position: fixed;\n"
 					+ "    bottom: 5mm;\n"
 					+ "    left: 0;\n"
@@ -3020,7 +3163,7 @@ public class PrintBill {
 					+ "    text-align: center;\n"
 					+ "    font-size: 9px;\n"
 					+ "    color: #555;\n"
-					+ "  }\n"
+					+ "  }*/\n"
 					+ "}\n"
 					+ "</style>\n"
 					+ "</head>\n"
@@ -3119,7 +3262,7 @@ public class PrintBill {
 					+ "								<label>4. அடகு வைக்கபட்ட நகைகளின் விவரம் </label>\n"
 					+ "							</div></td>\n"
 					+ "						<td><textarea id=\"detailsTextarea\" name=\"details\"\n"
-					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT()+"</textarea></td>\n"
+					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT_TYPE()+"\n"+print.getPRODUCT()+"</textarea></td>\n"
 					+ "					</tr>\n"
 					+ "\n"
 					+ "					<tr>\n"
@@ -3173,7 +3316,9 @@ public class PrintBill {
 					+ "								<label>இதில் கண்ட அசல் வட்டி தொகையை செலுத்தி </br> மேற் கொண்ட\n"
 					+ "									அடகு பொருளைப் மீண்டும் </br> பெற்றுக் கொண்டேன்\n"
 					+ "								</label>\n"
-					+ "							</div></td>\n"
+					+ "							</div>"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ "</td>\n"
 					+ "						<td><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br>கையெழுத்து</label>\n"
 					+ "							</div></td>\n"
@@ -3188,11 +3333,11 @@ public class PrintBill {
 					+ "\n"
 					+ "			</form>\n"
 					+ "		</div>\n"
-					+"<div id=\"printFooter\" style=\"text-align: center; font-size: 10px; color: #555; margin-top: 20px;\"></div>\n"
 					+ "	</div>\n"
 					+ "\n"
 					+ "	<script>\n"
 					+ "function printForm() {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    window.print();\n"
 					+ "}\n"
 					+ "\n"
@@ -3234,6 +3379,7 @@ public class PrintBill {
 					+ "}\n"
 					+ "\n"
 					+ "window.addEventListener('load', () => {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    autoResizeTextarea();\n"
 					+ "});\n"
 					+ "\n"
@@ -3586,7 +3732,7 @@ public class PrintBill {
 					+ "	.highlighted-amount {\n"
 					+ "		font-size: 14px; /* Reduce font size for highlighted amounts */\n"
 					+ "	}\n"
-					+ "#printFooter {\n"
+					+ "/*#printFooter {\n"
 					+ "    position: fixed;\n"
 					+ "    bottom: 5mm;\n"
 					+ "    left: 0;\n"
@@ -3594,7 +3740,7 @@ public class PrintBill {
 					+ "    text-align: center;\n"
 					+ "    font-size: 9px;\n"
 					+ "    color: #555;\n"
-					+ "  }\n"
+					+ "  }*/\n"
 					+ "}\n"
 					+ "</style>\n"
 					+ "</head>\n"
@@ -3695,7 +3841,7 @@ public class PrintBill {
 					+ "								<label>4. அடகு வைக்கபட்ட நகைகளின் விவரம் </label>\n"
 					+ "							</div></td>\n"
 					+ "						<td><textarea id=\"detailsTextarea\" name=\"details\"\n"
-					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT()+"</textarea></td>\n"
+					+ "								style=\"width: 100%;\" readonly>"+print.getPRODUCT_TYPE()+"\n"+print.getPRODUCT()+"</textarea></td>\n"
 					+ "					</tr>\n"
 					+ "\n"
 					+ "					<tr>\n"
@@ -3749,7 +3895,9 @@ public class PrintBill {
 					+ "								<label>இதில் கண்ட அசல் வட்டி தொகையை செலுத்தி </br> மேற் கொண்ட\n"
 					+ "									அடகு பொருளைப் மீண்டும் </br> பெற்றுக் கொண்டேன்\n"
 					+ "								</label>\n"
-					+ "							</div></td>\n"
+					+ "							</div>"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ "</td>\n"
 					+ "						<td><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br>கையெழுத்து</label>\n"
 					+ "							</div></td>\n"
@@ -3764,11 +3912,11 @@ public class PrintBill {
 					+ "\n"
 					+ "			</form>\n"
 					+ "		</div>\n"
-					+"<div id=\"printFooter\" style=\"text-align: center; font-size: 10px; color: #555; margin-top: 20px;\"></div>\n"
 					+ "	</div>\n"
 					+ "\n"
 					+ "	<script>\n"
 					+ "function printForm() {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    window.print();\n"
 					+ "}\n"
 					+ "\n"
@@ -3810,6 +3958,7 @@ public class PrintBill {
 					+ "}\n"
 					+ "\n"
 					+ "window.addEventListener('load', () => {\n"
+					+ "updatePrintFooterDateTime();\n"
 					+ "    autoResizeTextarea();\n"
 					+ "});\n"
 					+ "\n"
