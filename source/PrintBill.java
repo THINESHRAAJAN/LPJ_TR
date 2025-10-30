@@ -843,7 +843,7 @@ public class PrintBill {
 					+ "									அடகு பொருளைப் மீண்டும் </br> பெற்றுக் கொண்டேன்\n"
 					+ "								</label>\n"
 					+ "							</div>"
-					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 6px; color: red; margin-top: 20px;\"></div>\n"
 					+ "</td>\n"
 					+ "						<td><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br>கையெழுத்து</label>\n"
@@ -1422,7 +1422,7 @@ public class PrintBill {
 					+ "									அடகு பொருளைப் மீண்டும் </br> பெற்றுக் கொண்டேன்\n"
 					+ "								</label>\n"
 					+ "							</div>"
-					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 6px; color: red; margin-top: 20px;\"></div>\n"
 					+ "</td>\n"
 					+ "						<td><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br>கையெழுத்து</label>\n"
@@ -1719,7 +1719,10 @@ public class PrintBill {
 			print.setGOLD_RATE("");
 			print.setSILVER_RATE("");
 		}*/
-		GSRate.append(""+print.getGOLD_RATE()+" \n "+print.getSILVER_RATE()); //27Oct2025
+		if(null != print.getGOLD_RATE())
+			GSRate.append(""+print.getGOLD_RATE()+" \n "); //27Oct2025
+		if(null != print.getSILVER_RATE())
+			GSRate.append(""+print.getSILVER_RATE()+" \n "); //27Oct2025
 		//24Oct2025
 
 		try {
@@ -2079,7 +2082,7 @@ public class PrintBill {
 					+ "						</td>\n"
 					+ "					</tr>\n"
 					+ "					<tr>\n"
-					+ "						<td colspan=\"2\">\n"
+					+ "						<td colspan=\"2\" style=\"border: none\">\n"
 					+ "							<div class=\"header\">\n"
 					+ "								<div class=\"tamil-textshopname\">\n"
 					+ "									<label>ஸ்ரீ லலித் பிரசண்ணா நகை அடகு வியாபாரம்</label>\n"
@@ -2103,14 +2106,14 @@ public class PrintBill {
 					+ "						<td style=\"border: none\"></td>\n"
 					+ "					</tr>"
 					+ "<tr>\n"
-					+ "						<td style=\"border: 0; text-align: left;\">\n"
+					+ "						<td style=\"text-align: left;\">\n"
 					+ "							<div class=\"tamil-textnormal\">\n"
 					+ "								<label style=\"display: inline-block; vertical-align: middle;\">தொலைபேசி\n"
 					+ "									:</label> <span class=\"highlighted-amount\"\n"
 					+ "									style=\"font-size: 14px; color: #c62828;\"><b>"+print.getCUSTPHONE()+"</b></span>\n"
 					+ "							</div>\n"
 					+ "						</td>\n"
-					+ "						<td style=\"border: 0;\">\n"
+					+ "						<td>\n"
 					+ "							<div class=\"tamil-textnormal\">\n"
 					+ "								<label style=\"display: inline-block; vertical-align: middle;\">தேதி\n"
 					+ "									: </label> <span class=\"highlighted-amount\"\n"
@@ -2183,7 +2186,7 @@ public class PrintBill {
 					+ "								<label><br> <br> <br> <br> நகை எடுப்பவரின் </br> கையெழுத்து\n"
 					+ "								</label>\n"
 					+ "							</div>"
-					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 6px; color: red; margin-top: 20px;\"></div>\n"
 					+ " <div id=\"printGSRate\" style=\"text-align: left; font-size: 6px; color: red;\"><span>"+GSRate.toString()+"</span></div>\n"
 					+ "</td>\n"
 					+ "						<td style=\"border: none\"><div class=\"tamil-textsign\">\n"
@@ -2389,7 +2392,7 @@ public class PrintBill {
 				+ "	border-radius: 10px;\n"
 				+ "	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);\n"
 				+ "	max-width: 250mm;\n"
-				+ " background-image: url('"+bisLogo+"');\n"
+				+ " background-image: url('"+bisLogo.toString()+"');\n"
 				+ " background-repeat: no-repeat;\n"
 				+ " background-position: center center;\n"
 				+ " background-size: 100px 100px;\n"
@@ -3317,7 +3320,7 @@ public class PrintBill {
 					+ "									அடகு பொருளைப் மீண்டும் </br> பெற்றுக் கொண்டேன்\n"
 					+ "								</label>\n"
 					+ "							</div>"
-					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 6px; color: red; margin-top: 20px;\"></div>\n"
 					+ "</td>\n"
 					+ "						<td><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br>கையெழுத்து</label>\n"
@@ -3896,7 +3899,7 @@ public class PrintBill {
 					+ "									அடகு பொருளைப் மீண்டும் </br> பெற்றுக் கொண்டேன்\n"
 					+ "								</label>\n"
 					+ "							</div>"
-					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 8px; color: red; margin-top: 20px;\"></div>\n"
+					+ " <div id=\"printFooter\" style=\"text-align: left; font-size: 6px; color: red; margin-top: 20px;\"></div>\n"
 					+ "</td>\n"
 					+ "						<td><div class=\"tamil-textsign\">\n"
 					+ "								<label><br> <br> <br> <br>கையெழுத்து</label>\n"
