@@ -50,3 +50,4 @@ class CustomTableCellRendererForView extends DefaultTableCellRenderer {
         return comp;
     }
 }
+

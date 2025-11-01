@@ -294,6 +294,7 @@ class HomePage extends JFrame {
 	ArrayList<String> closingBillNums; // 28Apr2025
 	ArrayList<GSRate> GSRatesViewPanel; //24Oct2025
 	ArrayList<String> openOldBalanceAmt; //27Oct2025
+	ArrayList<SalesBill> openAllOldBalanceAmt; //01Nov2025
 
 	public HomePage() throws ParseException {
 		setTitle("Sri Lalith Prasanna Jewellery & Pawn Shop");
@@ -317,7 +318,7 @@ class HomePage extends JFrame {
 		sidebar.setBackground(new Color(72, 61, 139)); // Dark Purple Background
 
 		String[] options = { "Home", "Gold & Silver Rates", "Details", "Search", "Add Sales Bill", "Add Adagu Bill", 
-				"View Sales Bills", "View Adagu Bills", "Interest Calculation(%)", "Cancel Ledger", "UnPaid Bills", "Synch To Mobile", "Dummy", "Logout" };
+				"View Sales Bills", "View Adagu Bills", "Close Multiple Bills", "Interest Calculation(%)", "Cancel Ledger", "UnPaid Bills", "Synch To Mobile", "Dummy", "Logout" };
 		JButton[] buttons = new JButton[options.length];
 
 		// Content Panel with CardLayout
@@ -335,6 +336,7 @@ class HomePage extends JFrame {
 		contentPanel.add(createViewSalesBillPanel(), "View Sales Bills");
 		contentPanel.add(createViewAdaguBillPanel(), "View Adagu Bills");
 		//24Oct2025
+		contentPanel.add(createCloseMultiBillPanel(), "Close Multiple Bills"); //31Oct2025
 		contentPanel.add(createInterestCalculationPanel(), "Interest Calculation(%)");
 		contentPanel.add(createCancelLedgerPanel(), "Cancel Ledger");
 		contentPanel.add(createUnPaidBillsPanel(), "UnPaid Bills");
@@ -5298,6 +5300,29 @@ class HomePage extends JFrame {
 		footerPanel.add(btnGenerateBill);
 		footerPanel.add(btnNotifyBill);
 		footerPanel.add(dPrintUrlLabel);
+		
+		//01Nov2025
+		URL cPrintUrl = TextFieldWithIcon.class.getResource("/images/tc.png");
+		ImageIcon cPrintUrlicon = new ImageIcon(cPrintUrl);
+		Image cPrintUrlimage = cPrintUrlicon.getImage();
+		Image cPrintUrlImage = cPrintUrlimage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+		ImageIcon cPrintUrlIcon = new ImageIcon(cPrintUrlImage);
+		JLabel cPrintUrlLabel = new JLabel(cPrintUrlIcon);
+		footerPanel.add(cPrintUrlLabel);
+		cPrintUrlLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				PrintBill print = new PrintBill();
+				String printFileName = "AdaguConditions.pdf";
+				try {
+					print.printFormConditions(print, printFileName);
+				} catch (DocumentException | IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		//01Nov2025
 
 		// footerPanel.add(btnExportPDF);
 
@@ -5809,6 +5834,332 @@ class HomePage extends JFrame {
 		return panel;
 	}
 	
+	//31Oct2025
+	public JPanel createCloseMultiBillPanel() {
+		JPanel panel = new JPanel();
+		JTextField txtBillNo, txtMobileNo, txtLicenceNo, txtName;
+		JButton btnSearch, btnCloseBill, btnCloseBillMany;
+		JComboBox<String> cmbStatus, cmbProductType;
+		JTable table;
+		JDateChooser adaguDate;
+		DefaultTableModel tableModel;
+		ArrayList<String> tempClosingBills = new ArrayList<>();
+				
+		panel.setLayout(new BorderLayout());
+		JPanel headerPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+			private Image backgroundImage;
+
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				try {
+					URL imageUrl = getClass().getResource("/images/header.jpeg"); // Adjust the path to your image
+					if (imageUrl != null) {
+						backgroundImage = new ImageIcon(imageUrl).getImage();
+					} else {
+						System.out.println("Image not found!");
+					}
+					g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		headerPanel.setLayout(new FlowLayout());
+
+		URL licNoUrl = TextFieldWithIcon.class.getResource("/images/eyeopen.png");
+		ImageIcon licNoUrlicon = new ImageIcon(licNoUrl);
+		Image licNoUrlimage = licNoUrlicon.getImage();
+		Image licNoUrlImage = licNoUrlimage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+		ImageIcon licNoUrlIcon = new ImageIcon(licNoUrlImage);
+		URL newLicNoUrl = TextFieldWithIcon.class.getResource("/images/eyeclose.png");
+		ImageIcon newLicNoIcon = new ImageIcon(newLicNoUrl);
+		Image newLicNoImage = newLicNoIcon.getImage();
+		Image newLicNoUrlImage = newLicNoImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+		ImageIcon newLicNoUrlIcon = new ImageIcon(newLicNoUrlImage);
+		JLabel licNoUrlLabel = new JLabel(licNoUrlIcon);
+		txtLicenceNo = new JTextField(10);
+		txtLicenceNo.setText("*****");
+		licNoUrlLabel.addMouseListener(new MouseAdapter() {
+			private boolean isFirstImage = true;
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (isFirstImage) {
+					licNoUrlLabel.setIcon(newLicNoUrlIcon);
+					txtLicenceNo.setText("16/21-22");
+				} else {
+					licNoUrlLabel.setIcon(licNoUrlIcon);
+					txtLicenceNo.setText("*****");
+				}
+				isFirstImage = !isFirstImage;
+			}
+		});
+
+		JLabel lblBillNo = new JLabel("Bill No:");
+		txtBillNo = new JTextField(10);
+		JLabel lblMobileNo = new JLabel("Mobile No:");
+		txtMobileNo = new JTextField(10);
+		JLabel lblName = new JLabel("Name");
+		txtName = new JTextField(10);
+
+		JLabel lblStatus = new JLabel("Status:");
+		cmbStatus = new JComboBox<>(new String[] { "", "Paid", "Pending" });
+
+		JLabel lblProductType = new JLabel("Type:");
+		cmbProductType = new JComboBox<>(new String[] { "", "Gold", "Silver", "Gold & Silver" });
+
+		JLabel adagudateLabel = new JLabel("Adagu Date:");
+		adaguDate = new JDateChooser();
+		adaguDate.setDateFormatString("dd-MM-yyyy");
+
+		btnSearch = new JButton("Search");
+
+		headerPanel.add(licNoUrlLabel);
+		headerPanel.add(lblBillNo);
+		headerPanel.add(txtBillNo);
+		headerPanel.add(lblName);
+		headerPanel.add(txtName);
+		headerPanel.add(lblMobileNo);
+		headerPanel.add(txtMobileNo);
+		headerPanel.add(lblStatus);
+		headerPanel.add(cmbStatus);
+		headerPanel.add(lblProductType);
+		headerPanel.add(cmbProductType);
+		headerPanel.add(adagudateLabel);
+		headerPanel.add(adaguDate);
+		btnCloseBillMany = new JButton("Close Multiple Bills");
+		btnCloseBillMany.setForeground(Color.RED);
+		headerPanel.add(btnCloseBillMany);
+		headerPanel.add(btnSearch);
+
+		panel.add(headerPanel, BorderLayout.NORTH);
+
+		tableModel = new DefaultTableModel(new String[] { "PHONE", "LIC", "BILL", "NAME", "ADDRESS", "PRODUCT",
+				"WEIGHT", "AMT", "DATE", "R.DATE", "STATUS", "C.DATE" }, 0);
+
+		table = new JTable(tableModel);
+		table.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
+		table.getTableHeader().setFont(new Font("Serif", Font.BOLD, 20));
+		table.getTableHeader().setForeground(new Color(58, 113, 232));
+		table.setRowHeight(500, 100);
+		table.getColumnModel().getColumn(0).setPreferredWidth(110);
+
+		JScrollPane tableScroll = new JScrollPane(table);
+		panel.add(tableScroll, BorderLayout.CENTER);
+
+		JPanel footerPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+			private Image backgroundImage;
+
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				try {
+					URL imageUrl = getClass().getResource("/images/footer.jpg"); // Adjust the path to your image
+					if (imageUrl != null) {
+						backgroundImage = new ImageIcon(imageUrl).getImage();
+					} else {
+						System.out.println("Image not found!");
+					}
+					g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		footerPanel.setLayout(new FlowLayout());
+
+		btnCloseBill = new JButton("Close Bill");
+		btnCloseBill.setForeground(Color.RED);
+
+		footerPanel.add(btnCloseBill);
+		panel.add(footerPanel, BorderLayout.SOUTH);
+
+		btnCloseBill.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				int selectedRow = table.getSelectedRow();
+				if (selectedRow >= 0) {
+					String BILLNO = tableModel.getValueAt(selectedRow, 2).toString(); // CHANGE ORDER BILLNUM
+					BigDecimal billNo = new BigDecimal(BILLNO);
+					AdaguBill selectedRecord = null;
+
+					for (AdaguBill record : AdaguBillListViewPanel) {
+						if (new BigDecimal(record.getBILL_NUMBER()).compareTo(billNo) == 0) {
+							selectedRecord = record;
+							break;
+						}
+					}
+
+					if (selectedRecord != null && !selectedRecord.getSTATUS().equals("Paid")) {
+						selectedRecord.setSTATUS("Paid");
+						selectedRecord.setREDEMPTION_DATE("" + new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+						tableModel.setValueAt("Paid", selectedRow, 10); // Update the table view
+						tableModel.setValueAt("" + new SimpleDateFormat("dd-MM-yyyy").format(new Date()), selectedRow,
+								9); // Update the table view
+						DefaultTableModel model = (DefaultTableModel) table.getModel();
+						for (int i = 0; i < table.getColumnCount(); i++) {
+							if (table.getColumnName(i).equals("STATUS")) {
+								model.setValueAt("Paid", selectedRow, i);
+							}
+						}
+						DBConnect paidBill = new DBConnect();
+						boolean isPaid = paidBill.updatePaidStatus(selectedRecord.getBILL_NUMBER());
+						if (isPaid)
+							JOptionPane.showMessageDialog(panel, "Bill No: " + billNo + " is now Paid.");
+						else
+							JOptionPane.showMessageDialog(panel, "This bill is already Paid or not found.");
+					} else {
+						JOptionPane.showMessageDialog(panel, "This bill is already Paid or not found.");
+					}
+				} else {
+					JOptionPane.showMessageDialog(panel, "Please select a record to close.");
+				}
+
+			}
+		});
+
+		btnCloseBillMany.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JDialog dialog = new JDialog();
+				dialog.setTitle("Choose Bill Num");
+				dialog.setSize(500, 400);
+				JPanel checkBoxPanel = new JPanel();
+				checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.Y_AXIS));
+				List<JCheckBox> checkBoxes = new ArrayList<>();
+				DBConnect loadData = new DBConnect();
+				closingBillNums = loadData.loadclosingBillNums();
+				for (String option : closingBillNums) {
+					JCheckBox checkBox = new JCheckBox(option);
+					checkBoxes.add(checkBox);
+					checkBoxPanel.add(checkBox);
+				}
+				JScrollPane scrollPane = new JScrollPane(checkBoxPanel);
+				scrollPane.setPreferredSize(new Dimension(350, 150));
+				JPanel searchPanel = new JPanel();
+				searchPanel.setLayout(new FlowLayout());
+				JTextField searchTextField = new JTextField(20);
+				JDateChooser cancelDate;
+				cancelDate = new JDateChooser();
+				cancelDate.setDateFormatString("dd-MM-yyyy");
+				cancelDate.setForeground(new Color(247, 25, 92));
+				cancelDate.setDate(new java.util.Date());
+				searchPanel.add(searchTextField);
+				searchPanel.add(cancelDate);
+				searchTextField.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyReleased(KeyEvent e) {
+						String searchQuery = searchTextField.getText().toLowerCase();
+						for (JCheckBox checkBox : checkBoxes) {
+							String option = checkBox.getText().toLowerCase();
+							if (option.contains(searchQuery)) {
+								checkBox.setVisible(true);
+							} else {
+								checkBox.setVisible(false);
+							}
+						}
+						checkBoxPanel.revalidate();
+						checkBoxPanel.repaint();
+					}
+				});
+				JButton saveButton = new JButton("OK");
+				saveButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						List<String> selectedOptions = new ArrayList<>();
+						for (JCheckBox checkBox : checkBoxes) {
+							if (checkBox.isSelected()) {
+								selectedOptions.add(checkBox.getText());
+							}
+						}
+						if (selectedOptions.isEmpty()) {
+							JOptionPane.showMessageDialog(dialog, "Please Choose Bill Num.");
+						} else {
+							for (String billNO : selectedOptions) {
+								tempClosingBills.add(billNO.trim().toUpperCase().toString());
+							}
+						}
+						dialog.dispose();
+					}
+				});
+				JPanel paneling = new JPanel();
+				paneling.setLayout(new BorderLayout());
+				paneling.add(searchPanel, BorderLayout.NORTH);
+				paneling.add(scrollPane, BorderLayout.CENTER);
+				paneling.add(saveButton, BorderLayout.SOUTH);
+				dialog.add(paneling);
+				dialog.setVisible(true);
+			}
+		});
+
+		btnSearch.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DBConnect loadData = new DBConnect();
+				AdaguBillListViewPanel = loadData.loadADAGUData();
+				String billNo = txtBillNo.getText().trim();
+				String mobileNo = txtMobileNo.getText().trim();
+				String status = cmbStatus.getSelectedItem().toString();
+				String productType = cmbProductType.getSelectedItem().toString(); 
+				String licenseno = txtLicenceNo.getText().toString().trim();
+				String Name = txtName.getText().toUpperCase().trim().toString();
+				String ADAGUDATEFORMATTED = "";
+				Date ADAGUDATE = new Date();
+				ADAGUDATE = adaguDate.getDate();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+				if (null != ADAGUDATE) {
+					ADAGUDATEFORMATTED = sdf.format(adaguDate.getDate());
+				}
+				tableModel.setRowCount(0);
+				for (AdaguBill record : AdaguBillListViewPanel) {
+					boolean matchesBillNo = billNo.isEmpty() || String.valueOf(record.getBILL_NUMBER()).equals(billNo);
+					boolean matchesName = Name.isEmpty() || String.valueOf(record.getCUSTOMER_NAME()).equals(Name);
+					boolean matchesLicNo = licenseno.isEmpty()
+							|| String.valueOf(record.getLICENCE_NUMBER().toString().trim()).equals(licenseno);
+					boolean matchesMobileNo = mobileNo.isEmpty() || record.getCUSTOMER_PHONE().equals(mobileNo);
+					boolean matchesStatus = status.equals("") || record.getSTATUS().equals(status);
+					boolean matchesProductType = productType.equals("")
+							|| record.getPRODUCT_TYPE().equalsIgnoreCase(productType); // 16Sep2025
+					boolean matchesAdaguDate = ADAGUDATEFORMATTED.equals("")
+							|| record.getADAGU_DATE().equals(ADAGUDATEFORMATTED);
+					boolean matchesMultiBills = false;
+					if(null != tempClosingBills && tempClosingBills.size()>0)
+					{
+						for(int i=0;i<tempClosingBills.size();i++)
+						{
+							if(String.valueOf(record.getBILL_NUMBER()).equals(tempClosingBills.get(i))) 
+							{
+								matchesMultiBills = true;
+							}
+						}
+					}else {
+						matchesMultiBills =true;
+					}
+					if (matchesBillNo && matchesMobileNo && matchesStatus && matchesLicNo && matchesName
+							&& matchesAdaguDate && matchesProductType && matchesMultiBills) { 
+						tableModel.addRow(new Object[] { record.getCUSTOMER_PHONE(), record.getLICENCE_NUMBER(),
+								record.getBILL_NUMBER(), record.getCUSTOMER_NAME(), record.getCUSTOMER_ADDRESS(),
+								record.getPRODUCTS(), record.getPRODUCT_WEIGHT(), record.getADAGU_AMOUNT(),
+								record.getADAGU_DATE(), record.getREDEMPTION_DATE(), record.getSTATUS(),
+								record.getCANCEL_DATE() }); 
+					}
+				}
+			}
+		});
+		int columnCount = table.getColumnModel().getColumnCount();
+		for (int i = 0; i < columnCount; i++) {
+			table.getColumnModel().getColumn(i).setCellRenderer(new CustomTableCellRendererForView());
+		}
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		return panel;
+	}
+	//31Oct2025
+	
 	public JPanel createInterestCalculationPanel()
 	{
 		JPanel panel = new JPanel();
@@ -5941,6 +6292,16 @@ class HomePage extends JFrame {
 				String ADAGUDATEFORMATTED = "";
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 				SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy"); //23Sep2025
+				//01Nov2025
+				Date ADAGUDATE = new Date();
+				String ADAGUDATEFORMATTED1 = "";
+				String ADAGUDATEFORMATTED2 = "";
+				ADAGUDATE = adaguDate.getDate();
+				if (null != ADAGUDATE) {
+					ADAGUDATEFORMATTED1 = sdf.format(adaguDate.getDate());
+					ADAGUDATEFORMATTED2 = sdf1.format(adaguDate.getDate());
+				}
+				//01Nov2025
 				//25Sep2025 Start
 				Date comparisonDate = null;
 				try {
@@ -5961,9 +6322,13 @@ class HomePage extends JFrame {
 					boolean matchesLicNo = licenseno.isEmpty()
 							|| String.valueOf(record.getLICENCE_NUMBER().toString().trim()).equals(licenseno);
 					boolean matchesMobileNo = mobileNo.isEmpty() || record.getCUSTOMER_PHONE().equals(mobileNo);
-					boolean matchesAdaguDate = ADAGUDATEFORMATTED.equals("")
-							|| record.getADAGU_DATE().equals(ADAGUDATEFORMATTED);
-					if (matchesBillNo && matchesMobileNo && matchesLicNo && matchesName && matchesAdaguDate) {
+					//01Nov2025
+					boolean matchesAdaguDate = ADAGUDATEFORMATTED1.equals("")
+							|| record.getADAGU_DATE().equals(ADAGUDATEFORMATTED1);
+					boolean matchesAdaguDate1 = ADAGUDATEFORMATTED2.equals("")
+							|| record.getADAGU_DATE().equals(ADAGUDATEFORMATTED2);
+					//01Nov2025
+					if (matchesBillNo && matchesMobileNo && matchesLicNo && matchesName && matchesAdaguDate && matchesAdaguDate1) {
 //						 "PHONE", "LIC", "BILL", "NAME", "DATE", "TYPE", "AMT",
 //							"Diff In Mon", "Interest%", "Amount Payable" 
 						ADAGUDATEFORMATTED = record.getADAGU_DATE();
@@ -6458,6 +6823,7 @@ class HomePage extends JFrame {
 	private JPanel createAddSalesBillPanel() {
 
 		JPanel panel;
+		JPanel panelMain, PanelRight; // 01Nov2025
 		JTextField salesAmt, custName, custPhone, productDetails, productWeight, custAddress, balanceAmt, balanceDesc,
 				salesAmt2, oldbalanceAmt; //24Oct2025
 		JLabel shopName;
@@ -6867,7 +7233,7 @@ class HomePage extends JFrame {
 
 		JPanel shopNamePanel = new JPanel(new BorderLayout());
 		JLabel licNoUrlLabel = new JLabel(licNoUrlIcon);
-		shopNamePanel.add(shopName, BorderLayout.CENTER);
+		shopNamePanel.add(shopName, BorderLayout.WEST); //01Nov2025
 		// shopNamePanel.add(licNoUrlLabel, BorderLayout.WEST);
 
 		URL notifyUrl = TextFieldWithIcon.class.getResource("/images/mail.png");
@@ -6888,7 +7254,15 @@ class HomePage extends JFrame {
 		rightPanel.setLayout(new GridLayout(1, 2));
 		rightPanel.add(notifyLabel);
 		rightPanel.add(printLabel);
-		shopNamePanel.add(rightPanel, BorderLayout.LINE_END);
+		rightPanel.add(new JLabel(""));
+		rightPanel.add(new JLabel(""));
+		rightPanel.add(new JLabel(""));
+		rightPanel.add(new JLabel(""));
+		rightPanel.add(new JLabel(""));
+		rightPanel.add(new JLabel(""));
+		rightPanel.add(new JLabel(""));
+		rightPanel.add(new JLabel(""));
+		shopNamePanel.add(rightPanel, BorderLayout.CENTER); //01Nov2025
 
 		panel.add(shopNamePanel, gbc);
 
@@ -7658,7 +8032,7 @@ class HomePage extends JFrame {
 		
 		
 		//27Oct2025
-		JPopupMenu popupOldBalanceMenu = new JPopupMenu();
+		/*JPopupMenu popupOldBalanceMenu = new JPopupMenu();
 		JMenuItem popupOldBalanceItem = new JMenuItem("Add Old Balance");
 		popupOldBalanceMenu.add(popupOldBalanceItem);
 
@@ -7728,12 +8102,178 @@ class HomePage extends JFrame {
 				dialog.setVisible(true);
 			}
 		});
-		
+		*/
 		//27Oct2025
+		
+		//01Nov2025
+		
+		panelMain = new JPanel();
+		panelMain.setLayout(new BorderLayout());
+		GridBagConstraints gbcm = new GridBagConstraints();
+		gbcm.insets = new Insets(10, 10, 10, 10);
+		gbcm.anchor = GridBagConstraints.NORTH;
+		panelMain.add(panel, BorderLayout.WEST);
+		PanelRight = new JPanel();
+		PanelRight.setLayout(new BorderLayout());
+		JPanel panell = new JPanel();
+		JTextField txtMobileNo;
+		JButton btnSearch;
+		JTable tableSales;
+		DefaultTableModel tableModelSales;
+		panell.setLayout(new BorderLayout());
+		JPanel headerPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+			private Image backgroundImage;
+
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				try {
+					URL imageUrl = getClass().getResource("/images/header.jpeg"); // Adjust the path to your image
+					if (imageUrl != null) {
+						backgroundImage = new ImageIcon(imageUrl).getImage();
+					} else {
+						System.out.println("Image not found!");
+					}
+					g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		headerPanel.setLayout(new FlowLayout());
+		JLabel lblMobileNo = new JLabel("Mobile No:");
+		txtMobileNo = new JTextField(10);
+		btnSearch = new JButton("Search");
+
+		headerPanel.add(lblMobileNo);
+		headerPanel.add(txtMobileNo);
+		headerPanel.add(btnSearch);
+
+		panell.add(headerPanel, BorderLayout.NORTH);
+
+		tableModelSales = new DefaultTableModel(
+				new String[] { "ID", "TYPE", "BILLNO", "NAME", "AMT", "BAL" }, 0);
+		tableSales = new JTable(tableModelSales);
+		tableSales.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
+		tableSales.getTableHeader().setFont(new Font("Serif", Font.BOLD, 16));
+		tableSales.getTableHeader().setForeground(new Color(245, 47, 4));
+		tableSales.setRowHeight(500, 100);
+		tableSales.getColumnModel().getColumn(0).setPreferredWidth(110);
+		JScrollPane tableScrollSales = new JScrollPane(tableSales);
+		
+		GridBagConstraints gbcr = new GridBagConstraints();
+		gbcr.insets = new Insets(10, 10, 10, 10);
+		gbcr.anchor = GridBagConstraints.NORTH;
+		JPanel Panel1r = new JPanel(new GridLayout(1, 2));
+		Panel1r.add(tableScrollSales);
+		panell.add(Panel1r, BorderLayout.CENTER);
+		JPanel footerPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
+			private Image backgroundImage;
+
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				try {
+					URL imageUrl = getClass().getResource("/images/footer.jpg"); // Adjust the path to your image
+					if (imageUrl != null) {
+						backgroundImage = new ImageIcon(imageUrl).getImage();
+					} else {
+						System.out.println("Image not found!");
+					}
+					g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		footerPanel.setLayout(new FlowLayout());
+		//panell.add(footerPanel, BorderLayout.SOUTH);
+		btnSearch.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DBConnect loadData = new DBConnect();
+				String mobileNo = txtMobileNo.getText().trim();
+				openAllOldBalanceAmt = loadData.loadAllOpenBalance(mobileNo);
+				tableModelSales.setRowCount(0);
+				for (SalesBill record : openAllOldBalanceAmt) {
+					boolean matchesMobileNo = mobileNo.isEmpty() || record.getCUSTOMER_PHONE().equals(mobileNo);
+					if (matchesMobileNo) {
+						tableModelSales.addRow(new Object[] { record.getAD_SALESDATA_ID(), record.getBILL_TYPE(), record.getBILL_NO(),
+								record.getCUSTOMER_NAME(), record.getSALES_AMOUNT(), record.getBALANCE_AMOUNT() });
+					}
+				}
+			}
+		});
+
+		// Set the custom renderer for all columns
+		int columnCountSales = tableSales.getColumnModel().getColumnCount();
+
+		for (int i = 0; i < columnCountSales; i++) {
+			tableSales.getColumnModel().getColumn(i).setCellRenderer(new CustomTableCellRendererForView());
+		}
+		PanelRight.add(panell);
+		panelMain.add(PanelRight, BorderLayout.EAST);
+		setVisible(true);
+		custPhone.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String mobileNo = custPhone.getText().trim();
+				if(mobileNo.length() > 0) {
+					txtMobileNo.setText(mobileNo);
+				}
+			}
+		});
+		
+		JPopupMenu popupOldBalanceMenu = new JPopupMenu();
+		JMenuItem popupOldBalanceItem = new JMenuItem("Add Old Balance");
+		popupOldBalanceMenu.add(popupOldBalanceItem);
+		tableSales.setComponentPopupMenu(popupOldBalanceMenu);
+		oldbalanceAmt.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					popupOldBalanceMenu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					popupOldBalanceMenu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		});
+		
+		popupOldBalanceItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int selectedRow = tableSales.getSelectedRow();
+				if (selectedRow >= 0) {
+					int old = 0, current = 0, now = 0;
+					if(null != tableModelSales.getValueAt(selectedRow, 5))
+					{
+						if(oldbalanceAmt.getText().toString().trim().length() > 0 && !oldbalanceAmt.getText().toString().trim().equals("Old Balance Amount"))
+						{
+							double temp = Double.parseDouble(oldbalanceAmt.getText().toString().trim());
+							 old = (int) temp;
+						}
+						double temp1 = Double.parseDouble(tableModelSales.getValueAt(selectedRow, 5).toString().trim());
+						current = (int) temp1;
+						now = old + current;
+						oldbalanceAmt.setText(""+now);
+					}else {
+						
+					}
+				} else {
+					JOptionPane.showMessageDialog(panel, "Please select a record to Update");
+				}
+			}
+		});
+		//01Nov2025
 
 		setVisible(true);
 
-		return panel;
+		return panelMain; //01Nov2025
 
 	}
 
@@ -8440,7 +8980,7 @@ class HomePage extends JFrame {
 		headerPanel.add(refreshURLLabel);
 		panel.add(headerPanel, BorderLayout.NORTH);
 
-		tableModelGSRates = new DefaultTableModel(new String[] { "Date", "Gold Rs/gm", "Silver Rs/gm" }, 0);
+		tableModelGSRates = new DefaultTableModel(new String[] { "S.No", "Date", "Gold Rs/gm", "Silver Rs/gm" }, 0);
 		tableGSRates = new JTable(tableModelGSRates);
 		tableGSRates.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
 		tableGSRates.getTableHeader().setFont(new Font("Serif", Font.BOLD, 16));
@@ -8630,7 +9170,7 @@ class HomePage extends JFrame {
 				tableModelGSRates.setRowCount(0);
 				for (GSRate record : GSRatesViewPanel) {
 					tableModelGSRates
-							.addRow(new Object[] { record.getDATE(), record.getGOLD_RATE(), record.getSILVER_RATE() });
+							.addRow(new Object[] { record.getGS_RATE_ID(), record.getDATE(), record.getGOLD_RATE(), record.getSILVER_RATE() });
 				}
 			}
 		});
@@ -8643,6 +9183,51 @@ class HomePage extends JFrame {
 		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
+		
+		//01Nov2025
+		JPopupMenu popupMenu = new JPopupMenu();
+		JMenuItem deleteItem = new JMenuItem("Delete");
+		popupMenu.add(deleteItem);
+		tableGSRates.setComponentPopupMenu(popupMenu);
+		deleteItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int selectedRow = tableGSRates.getSelectedRow();
+				if (selectedRow >= 0) {
+					String Rate_ID = tableModelGSRates.getValueAt(selectedRow, 0).toString();
+					int GS_RATE_ID = Integer.parseInt(Rate_ID);
+					GSRate selectedRecord = null;
+					for (GSRate record : GSRatesViewPanel) {
+						if (record.getGS_RATE_ID() == GS_RATE_ID) {
+							selectedRecord = record;
+							break;
+						}
+					}
+					if (selectedRecord != null) {
+						int option = JOptionPane.showConfirmDialog(null, "Sure Need To Delete This Record ?",
+								"Delete Record", JOptionPane.YES_NO_OPTION);
+						if (option == JOptionPane.YES_OPTION) {
+							DefaultTableModel model = (DefaultTableModel) tableGSRates.getModel();
+							model.removeRow(selectedRow);
+							DBConnect deleteRecord = new DBConnect();
+							boolean isDeleted = deleteRecord.deleteGSRateData(selectedRecord.getGS_RATE_ID());
+							if (isDeleted) {
+								JOptionPane.showMessageDialog(panel, "Record Deleted Successfully!");
+							} else {
+								JOptionPane.showMessageDialog(panel, "Error In Record Deletion");
+							}
+						}
+					} else {
+						JOptionPane.showMessageDialog(panel, "Error In Record Deletion");
+					}
+				} else {
+					JOptionPane.showMessageDialog(panel, "Please select a record to Delete.");
+				}
+			}
+		});
+		//01Nov2025
+		
+		
 		return panel;
 
 	}
@@ -8902,7 +9487,7 @@ class HomePage extends JFrame {
 		return panel;
 
 	}
-
+	
 }
 
 class AdminHomePage extends JFrame {

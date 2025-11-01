@@ -233,7 +233,7 @@ public class DBConnect {
 		String query = "SELECT LICENCE_NO, BILL_NO, CUSTOMER_NAME, CUSTOMER_PHONE, HEIR, HEIR_RELATION, CUSTOMER_ADDRESS, "
 				+ "PRODUCT, PRODUCT_WEIGHT, ADAGU_AMOUNT, ADAGU_ACTUAL_AMOUNT, PRODUCT_VALUE, ADAGU_DATE, REDEMPTION_DATE, "
 				+ "CANCEL_DATE, BILL_TYPE, STATUS, LOCKER_NAME, LOCKER_BILLNUM, LOCKER_DATE, PAID_AMOUNT, REMAINING_AMOUNT"
-				+ ", BALANCE_BILLNUM, BALANCE_PRODUCT, BALANCE_DATE, PRODUCT_TYPE FROM AD_ADAGUDATA WHERE ISACTIVE='Y' ORDER BY BILL_NO "; //08Aug2025
+				+ ", BALANCE_BILLNUM, BALANCE_PRODUCT, BALANCE_DATE, PRODUCT_TYPE FROM AD_ADAGUDATA WHERE ISACTIVE='Y' ORDER BY LICENCE_NO, CAST(BILL_NO AS UNSIGNED) "; //08Aug2025 //01Nov2025
 
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -352,7 +352,7 @@ public class DBConnect {
 		ResultSet rs = null;
 
 		String query = "SELECT  AD_ADAGUDATA_ID AS AD_SALESDATA_ID, 'ADAGU' AS BILLTYPE, BILL_NO, CUSTOMER_NAME AS CUSTOME_NAME, ADAGU_AMOUNT AS SALES_AMOUNT, ADAGU_DATE AS SALES_DATE, STATUS, REMAINING_AMOUNT AS BALANCE_AMOUNT, CUSTOMER_PHONE FROM AD_ADAGUDATA UNION ALL "
-				+ "SELECT  AD_SALESDATA_ID, 'SALES' AS BILLTYPE, '' AS BILL_NO, CUSTOME_NAME, SALES_AMOUNT, SALES_DATE, '' AS STATUS, BALANCE_AMOUNT, CUSTOMER_PHONE FROM AD_SALESDATA ";
+				+ "SELECT  AD_SALESDATA_ID, 'SALES' AS BILLTYPE, '' AS BILL_NO, CUSTOME_NAME, SALES_AMOUNT, SALES_DATE, STATUS, BALANCE_AMOUNT, CUSTOMER_PHONE FROM AD_SALESDATA ";
 
 		try {
 			conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -1816,7 +1816,8 @@ public class DBConnect {
 			String query = "SELECT LICENCE_NO, BILL_NO, CUSTOMER_NAME, CUSTOMER_PHONE, HEIR, HEIR_RELATION, CUSTOMER_ADDRESS, "
 					+ "PRODUCT, PRODUCT_WEIGHT, ADAGU_AMOUNT, ADAGU_ACTUAL_AMOUNT, PRODUCT_VALUE, ADAGU_DATE, REDEMPTION_DATE, "
 					+ "CANCEL_DATE, BILL_TYPE, STATUS, LOCKER_NAME, LOCKER_BILLNUM, LOCKER_DATE, PAID_AMOUNT, REMAINING_AMOUNT"
-					+ ", BALANCE_BILLNUM, BALANCE_PRODUCT, BALANCE_DATE, PRODUCT_TYPE FROM AD_ADAGUDATA WHERE ISACTIVE='Y' AND STATUS != 'PAID' ORDER BY BILL_NO ";
+					+ ", BALANCE_BILLNUM, BALANCE_PRODUCT, BALANCE_DATE, PRODUCT_TYPE FROM AD_ADAGUDATA WHERE ISACTIVE='Y' AND (STATUS <> 'PAID' OR STATUS <> 'Paid') " //01Nov2025
+					+ " ORDER BY BILL_NO ";
 
 			try {
 				conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -1921,7 +1922,7 @@ public class DBConnect {
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 
-			String query = "SELECT DATE, GOLD_RATE, SILVER_RATE FROM GS_RATE ";
+			String query = "SELECT GS_RATE_ID, DATE, GOLD_RATE, SILVER_RATE FROM GS_RATE ";
 
 			try {
 				conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -1930,6 +1931,7 @@ public class DBConnect {
 
 				while (rs.next()) {
 					gsData = new GSRate();
+					gsData.setGS_RATE_ID(rs.getInt("GS_RATE_ID")); //01Nov2025
 					gsData.setDATE(rs.getString("DATE"));
 					gsData.setGOLD_RATE(rs.getString("GOLD_RATE"));
 					gsData.setSILVER_RATE(rs.getString("SILVER_RATE"));
@@ -2030,6 +2032,119 @@ public class DBConnect {
 			return closingBillNums;
 		}
 		//27Oct2025
+		
+		//01Nov2025
+		public boolean deleteGSRateData(int GS_RATE_ID) {
+			boolean isDeleted = false;
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String query = "DELETE FROM GS_RATE WHERE GS_RATE_ID = ? ";
+
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				
+				try (Statement stmt = conn.createStatement()) {
+					stmt.execute("SET SQL_SAFE_UPDATES = 0;");
+				}
+				 
+				pstmt = conn.prepareStatement(query);
+
+				pstmt.setInt(1, GS_RATE_ID);
+
+				int rowsAffected = pstmt.executeUpdate();
+				
+				try (Statement stmt = conn.createStatement()) {
+					stmt.execute("SET SQL_SAFE_UPDATES = 1;");
+				}
+
+				if (rowsAffected > 0) {
+					isDeleted = true;
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (rs != null)
+						rs.close();
+					if (pstmt != null)
+						pstmt.close();
+					if (conn != null)
+						conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			return isDeleted;
+		}
+		
+		public ArrayList<SalesBill> loadAllOpenBalance(String mobileNo) {
+			ArrayList<SalesBill> closingBillNums = new ArrayList<SalesBill>();
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			SalesBill SalesBill = new SalesBill();
+			
+			String query = "";
+			
+			if(mobileNo.length() > 0)
+			{
+				query = 
+					    "SELECT * FROM ( " +
+					    " SELECT AD_ADAGUDATA_ID AS ID, 'ADAGU' AS BILLTYPE, BILL_NO AS BILL, CUSTOMER_NAME AS NAME, ADAGU_AMOUNT AS AMOUNT, ADAGU_DATE AS SDATE, STATUS, REMAINING_AMOUNT AS BALANCE " +
+					    " FROM AD_ADAGUDATA WHERE ISACTIVE='Y' AND (STATUS <> 'PAID' AND STATUS <> 'Paid' OR LENGTH(REMAINING_AMOUNT) > 0) AND CUSTOMER_PHONE = "+mobileNo+"  " +
+					    " UNION ALL " +
+					    " SELECT AD_SALESDATA_ID AS ID, 'SALES' AS BILLTYPE, '' AS BILL, CUSTOME_NAME AS NAME, SALES_AMOUNT AS AMOUNT, SALES_DATE AS SDATE, STATUS, BALANCE_AMOUNT AS BALANCE " +
+					    " FROM AD_SALESDATA WHERE ISACTIVE='Y' AND (STATUS <> 'PAID' AND STATUS <> 'Paid' OR LENGTH(BALANCE_AMOUNT) > 0) AND CUSTOMER_PHONE = "+mobileNo+"  " +
+					    ") AS OLDBILLS";
+			}else {
+				query = 
+					    "SELECT * FROM ( " +
+					    " SELECT AD_ADAGUDATA_ID AS ID, 'ADAGU' AS BILLTYPE, BILL_NO AS BILL, CUSTOMER_NAME AS NAME, ADAGU_AMOUNT AS AMOUNT, ADAGU_DATE AS SDATE, STATUS, REMAINING_AMOUNT AS BALANCE " +
+					    " FROM AD_ADAGUDATA WHERE ISACTIVE='Y' AND (STATUS <> 'PAID' AND STATUS <> 'Paid' OR LENGTH(REMAINING_AMOUNT) > 0)  " +
+					    " UNION ALL " +
+					    " SELECT AD_SALESDATA_ID AS ID, 'SALES' AS BILLTYPE, '' AS BILL, CUSTOME_NAME AS NAME, SALES_AMOUNT AS AMOUNT, SALES_DATE AS SDATE, STATUS, BALANCE_AMOUNT AS BALANCE " +
+					    " FROM AD_SALESDATA WHERE ISACTIVE='Y' AND (STATUS <> 'PAID' AND STATUS <> 'Paid' OR LENGTH(BALANCE_AMOUNT) > 0) " +
+					    ") AS OLDBILLS";
+			}
+			
+
+			try {
+				conn = DriverManager.getConnection(URL, USER, PASSWORD);
+				pstmt = conn.prepareStatement(query);
+				rs = pstmt.executeQuery();
+
+				while (rs.next()) {
+					SalesBill = new SalesBill();
+					SalesBill.setAD_SALESDATA_ID(rs.getInt("ID"));
+					SalesBill.setBILL_TYPE(rs.getString("BILLTYPE"));
+					SalesBill.setBILL_NO(rs.getString("BILL"));
+					SalesBill.setCUSTOMER_NAME(rs.getString("NAME"));
+					SalesBill.setSALES_AMOUNT(rs.getString("AMOUNT"));
+					SalesBill.setSALES_DATE(rs.getString("SDATE"));
+					SalesBill.setSTATUS(rs.getString("STATUS"));
+					SalesBill.setBALANCE_AMOUNT(rs.getString("BALANCE"));
+					closingBillNums.add(SalesBill);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (rs != null)
+						rs.close();
+					if (pstmt != null)
+						pstmt.close();
+					if (conn != null)
+						conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			return closingBillNums;
+		}
+		//01Nov2025
 		
 		public static void main(String...args) {
 			Connection conn = null;

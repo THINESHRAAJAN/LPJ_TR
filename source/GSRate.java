@@ -23,4 +23,14 @@ public class GSRate {
 	public void setDATE(String dATE) {
 		DATE = dATE;
 	}
+	
+	//01Nov2025
+	private int GS_RATE_ID = 0;
+	public int getGS_RATE_ID() {
+		return GS_RATE_ID;
+	}
+	public void setGS_RATE_ID(int gS_RATE_ID) {
+		GS_RATE_ID = gS_RATE_ID;
+	}
+	//01Nov2025
 }
